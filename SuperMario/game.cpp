@@ -29,5 +29,12 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
 
 void Game::gameLoop()
 {
-    // check collisions, update HUD, move camera.
+    // TEMPORARY test: print once per second to prove the loop runs
+    static int frame = 0;
+    frame++;
+    if (frame % 60 == 0)
+        qDebug() << "Game loop running, frame" << frame;
+
+    // Later: update player & enemies, check collisions,
+    // update HUD, move camera.
 }
