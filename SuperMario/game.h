@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <QSet>
+#include "messagescreen.h"
 
 enum class GameState {
     START_SCREEN,
@@ -41,6 +42,7 @@ private:
     void handleInput();
     QSet<int> keysPressed;
     GameState state;
+    MessageScreen *message;
 };
 
 #endif // GAME_H

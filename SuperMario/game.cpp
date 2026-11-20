@@ -22,6 +22,12 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     QGraphicsPixmapItem *test = scene->addPixmap(testImage);
     test->setPos(100, 400);
 
+    // Message in the middle of the screen
+    message = new MessageScreen();
+    scene->addItem(message);
+    message->showMessage("Click to start");
+
+
     // 4. Game loop timer
     gameTimer = new QTimer(this);
     connect(gameTimer, &QTimer::timeout, this, &Game::gameLoop);
