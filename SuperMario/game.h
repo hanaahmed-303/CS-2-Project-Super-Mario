@@ -4,6 +4,8 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <QKeyEvent>
+#include <QSet>
 
 class Game : public QGraphicsView
 {
@@ -16,12 +18,19 @@ public:
     static const int WINDOW_HEIGHT = 600;
     static const int FRAME_MS      = 16;
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+
+
 private slots:
     void gameLoop();
 
 private:
     QGraphicsScene *scene;
     QTimer *gameTimer;
+    void handleInput();
+    QSet<int> keysPressed;
 };
 
 #endif // GAME_H

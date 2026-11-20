@@ -25,11 +25,14 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     gameTimer = new QTimer(this);
     connect(gameTimer, &QTimer::timeout, this, &Game::gameLoop);
     gameTimer->start(FRAME_MS);
+
+    setFocusPolicy(Qt::StrongFocus);
+    setFocus();
 }
 
 void Game::gameLoop()
 {
-    // TEMPORARY test: print once per second to prove the loop runs
+    handleInput();
     static int frame = 0;
     frame++;
     if (frame % 60 == 0)
@@ -37,4 +40,31 @@ void Game::gameLoop()
 
     // Later: update player & enemies, check collisions,
     // update HUD, move camera.
+}
+void Game::keyPressEvent(QKeyEvent *event)
+{
+    if (event->isAutoRepeat())
+        return;
+    keysPressed.insert(event->key());
+    qDebug() << "Pressed:" << event->key();   // TEMPORARY test
+}
+
+void Game::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->isAutoRepeat())
+        return;
+    keysPressed.remove(event->key());
+}
+
+void Game::handleInput()
+{
+    bool left  = keysPressed.contains(Qt::Key_Left)  || keysPressed.contains(Qt::Key_A);
+    bool right = keysPressed.contains(Qt::Key_Right) || keysPressed.contains(Qt::Key_D);
+    bool jump  = keysPressed.contains(Qt::Key_Space) || keysPressed.contains(Qt::Key_Up)
+                || keysPressed.contains(Qt::Key_W);
+
+    // Later: if (left) player->moveLeft(); else if (right) player->moveRight();
+    //        else player->stop();  if (jump) player->jump();
+
+    Q_UNUSED(left); Q_UNUSED(right); Q_UNUSED(jump);
 }
