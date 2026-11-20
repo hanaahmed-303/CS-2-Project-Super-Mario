@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include <QSet>
+#include <QMouseEvent>
 #include "messagescreen.h"
 
 enum class GameState {
@@ -23,6 +24,7 @@ class Game : public QGraphicsView
 
 public:
     explicit Game(QWidget *parent = nullptr);
+    void startGame();
 
     static const int WINDOW_WIDTH  = 800;
     static const int WINDOW_HEIGHT = 600;
@@ -31,6 +33,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 
 private slots:

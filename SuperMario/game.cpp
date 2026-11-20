@@ -78,3 +78,22 @@ void Game::handleInput()
 
     Q_UNUSED(left); Q_UNUSED(right); Q_UNUSED(jump);
 }
+
+void Game::mousePressEvent(QMouseEvent *event)
+{
+    if (state == GameState::START_SCREEN) {
+        startGame();
+    }
+    // Later:
+    // else if (state == GameState::GAME_OVER) { restart from Level 1 }
+    // else if (state == GameState::VICTORY)   { exitGame(); }
+
+    QGraphicsView::mousePressEvent(event);
+}
+
+void Game::startGame()
+{
+    message->hideMessage();
+    state = GameState::PLAYING;
+    setFocus();        // make sure the keyboard works right after clicking
+}
