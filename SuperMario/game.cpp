@@ -1,6 +1,4 @@
 #include "game.h"
-#include <QGraphicsPixmapItem>
-#include <QDebug>
 
 Game::Game(QWidget *parent) : QGraphicsView(parent)
 {
@@ -15,12 +13,6 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setWindowTitle("Super Mario");
 
-    // 3. TEMPORARY test that resources work (delete later)
-    QPixmap testImage(":/images/mario.png");
-    if (testImage.isNull())
-        qDebug() << "Image NOT found - check resources.qrc";
-    QGraphicsPixmapItem *test = scene->addPixmap(testImage);
-    test->setPos(100, 400);
 
     // Message in the middle of the screen
     message = new MessageScreen();
@@ -36,27 +28,22 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
 }
-
 void Game::gameLoop()
 {
     if (state != GameState::PLAYING)
         return;
 
     handleInput();
-    static int frame = 0;
-    frame++;
-    if (frame % 60 == 0)
-        qDebug() << "Game loop running, frame" << frame;
 
     // Later: update player & enemies, check collisions,
     // update HUD, move camera.
 }
+
 void Game::keyPressEvent(QKeyEvent *event)
 {
     if (event->isAutoRepeat())
         return;
     keysPressed.insert(event->key());
-    qDebug() << "Pressed:" << event->key();   // TEMPORARY test
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
