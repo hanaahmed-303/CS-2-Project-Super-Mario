@@ -1,0 +1,15 @@
+# Qt Creator / build output
+build*/
+*.pro.user
+*.pro.user.*
+CMakeLists.txt.user*
+*.o
+*.obj
+*.exe
+*.app
+Makefile*
+moc_*
+ui_*
+qrc_*
+.qmake.stash
+.DS_Store
