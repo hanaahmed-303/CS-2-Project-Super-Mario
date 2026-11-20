@@ -7,6 +7,15 @@
 #include <QKeyEvent>
 #include <QSet>
 
+enum class GameState {
+    START_SCREEN,
+    PLAYING,
+    PAUSED,
+    LEVEL_COMPLETE,
+    GAME_OVER,
+    VICTORY
+};
+
 class Game : public QGraphicsView
 {
     Q_OBJECT
@@ -31,6 +40,7 @@ private:
     QTimer *gameTimer;
     void handleInput();
     QSet<int> keysPressed;
+    GameState state;
 };
 
 #endif // GAME_H

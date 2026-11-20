@@ -4,6 +4,7 @@
 
 Game::Game(QWidget *parent) : QGraphicsView(parent)
 {
+    state = GameState::START_SCREEN;
     scene = new QGraphicsScene(this);
     scene->setSceneRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     setScene(scene);
@@ -32,6 +33,9 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
 
 void Game::gameLoop()
 {
+    if (state != GameState::PLAYING)
+        return;
+
     handleInput();
     static int frame = 0;
     frame++;
