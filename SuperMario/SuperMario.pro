@@ -9,6 +9,7 @@ CONFIG += c++17
 SOURCES += \
     game.cpp \
     gameobject.cpp \
+    healthbar.cpp \
     main.cpp \
     messagescreen.cpp \
     score.cpp
@@ -16,6 +17,7 @@ SOURCES += \
 HEADERS += \
     game.h \
     gameobject.h \
+    healthbar.h \
     messagescreen.h \
     score.h
 
