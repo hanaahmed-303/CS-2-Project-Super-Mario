@@ -13,6 +13,7 @@ public:
 
     void refresh(int health, int maxHealth, int lives, int level);
     Score *getScore() const;
+    void followCamera(double viewLeft);
 
 private:
     QGraphicsTextItem *createText(QGraphicsScene *scene);
