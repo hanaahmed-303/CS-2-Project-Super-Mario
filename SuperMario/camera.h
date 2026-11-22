@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 
+
 class Camera
 {
 public:

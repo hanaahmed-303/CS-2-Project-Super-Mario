@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include "messagescreen.h"
 #include "hud.h"
+#include "camera.h"
 
 enum class GameState {
     START_SCREEN,
@@ -53,6 +54,8 @@ private:
     MessageScreen *message;
     HUD *hud;
     int levelNumber;
+    Camera *camera;
+    QGraphicsRectItem *testTarget;   // TEMPORARY stand-in for Mario
 };
 
 #endif // GAME_H

@@ -16,7 +16,16 @@ void Camera::setLevelWidth(int width)
 
 void Camera::follow(QGraphicsItem *target)
 {
-    Q_UNUSED(target);   // filled in next commit
+    if (!target)
+        return;
+
+    // Where is the middle of the target in the world?
+    double targetCenter = target->sceneBoundingRect().center().x();
+
+    // Put the target in the middle of the screen
+    left = targetCenter - viewWidth / 2.0;
+
+    apply();
 }
 
 void Camera::reset()

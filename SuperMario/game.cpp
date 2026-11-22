@@ -17,7 +17,18 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setWindowTitle("Super Mario");
+    // Camera (must come AFTER setFixedSize, it reads the window size)
+    camera = new Camera(this);
 
+    // ---- TEMPORARY test world ----
+    scene->setSceneRect(0, 0, 3000, WINDOW_HEIGHT);
+    camera->setLevelWidth(3000);
+
+    for (int x = 0; x < 3000; x += 200)          // markers to see movement
+        scene->addRect(x, 500, 40, 40);
+
+    testTarget = scene->addRect(400, 450, 32, 48, QPen(Qt::black), QBrush(Qt::red));
+    // ---- end TEMPORARY ----
 
     // Message in the middle of the screen
     message = new MessageScreen();
@@ -36,6 +47,8 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
 Game::~Game()
 {
     delete hud;
+    delete camera;
+
 }
 void Game::gameLoop()
 {
@@ -73,6 +86,10 @@ void Game::handleInput()
     // Later: if (left) player->moveLeft(); else if (right) player->moveRight();
     //        else player->stop();  if (jump) player->jump();
 
+    // TEMPORARY: arrow keys move the test square
+    if (right) testTarget->moveBy(5, 0);
+    if (left)  testTarget->moveBy(-5, 0);
+
     Q_UNUSED(left); Q_UNUSED(right); Q_UNUSED(jump);
 }
 
@@ -96,9 +113,6 @@ void Game::startGame()
 }
 void Game::updateCamera()
 {
-    // Later (when Player exists): centerOn(player);
-
-    // Where is the left edge of the window in the scene right now?
-    double viewLeft = mapToScene(0, 0).x();
-    hud->followCamera(viewLeft);
+    camera->follow(testTarget);              // TEMPORARY - later: camera->follow(player);
+    hud->followCamera(camera->getLeft());
 }
