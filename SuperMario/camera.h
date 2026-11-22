@@ -23,6 +23,7 @@ private:
     int viewHeight;
     int levelWidth;
     double left;
+    void clampToLevel();
 };
 
 #endif // CAMERA_H

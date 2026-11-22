@@ -45,3 +45,13 @@ void Camera::apply()
     // Move the window so its left edge is at "left"
     view->centerOn(left + viewWidth / 2.0, viewHeight / 2.0);
 }
+
+void Camera::clampToLevel()
+{
+    double maxLeft = levelWidth - viewWidth;   // furthest the camera may go
+    if (maxLeft < 0)
+        maxLeft = 0;                            // level shorter than the screen
+
+    if (left > maxLeft) left = maxLeft;
+    if (left < 0)       left = 0;
+}
