@@ -8,6 +8,7 @@
 #include <QSet>
 #include <QMouseEvent>
 #include "messagescreen.h"
+#include "hud.h"
 
 enum class GameState {
     START_SCREEN,
@@ -29,6 +30,9 @@ public:
     static const int WINDOW_WIDTH  = 800;
     static const int WINDOW_HEIGHT = 600;
     static const int FRAME_MS      = 16;
+    static const int MAX_LEVELS = 3;
+
+    ~Game();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -46,6 +50,8 @@ private:
     QSet<int> keysPressed;
     GameState state;
     MessageScreen *message;
+    HUD *hud;
+    int levelNumber;
 };
 
 #endif // GAME_H
