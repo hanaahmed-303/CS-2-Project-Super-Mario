@@ -43,6 +43,7 @@ void Game::gameLoop()
         return;
 
     handleInput();
+    updateCamera();
 
     // Later: update player & enemies, check collisions,
     // update HUD, move camera.
@@ -92,4 +93,12 @@ void Game::startGame()
     message->hideMessage();
     state = GameState::PLAYING;
     setFocus();        // make sure the keyboard works right after clicking
+}
+void Game::updateCamera()
+{
+    // Later (when Player exists): centerOn(player);
+
+    // Where is the left edge of the window in the scene right now?
+    double viewLeft = mapToScene(0, 0).x();
+    hud->followCamera(viewLeft);
 }

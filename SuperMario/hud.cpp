@@ -47,3 +47,7 @@ void HUD::placeItems(double left, double top)
     levelText->setPos(left + 350, top + 5);
     livesText->setPos(left + 680, top + 5);
 }
+void HUD::followCamera(double viewLeft)
+{
+    placeItems(viewLeft, 0);
+}
