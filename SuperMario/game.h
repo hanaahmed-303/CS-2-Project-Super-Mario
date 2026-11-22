@@ -42,6 +42,7 @@ protected:
 
 private slots:
     void gameLoop();
+    void updateCamera();
 
 private:
     QGraphicsScene *scene;
