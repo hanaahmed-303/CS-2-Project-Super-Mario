@@ -55,7 +55,6 @@ private:
     HUD *hud;
     int levelNumber;
     Camera *camera;
-    QGraphicsRectItem *testTarget;   // TEMPORARY stand-in for Mario
 };
 
 #endif // GAME_H
