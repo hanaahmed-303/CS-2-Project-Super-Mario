@@ -10,6 +10,7 @@ SOURCES += \
     game.cpp \
     gameobject.cpp \
     healthbar.cpp \
+    hud.cpp \
     main.cpp \
     messagescreen.cpp \
     score.cpp
@@ -18,6 +19,7 @@ HEADERS += \
     game.h \
     gameobject.h \
     healthbar.h \
+    hud.h \
     messagescreen.h \
     score.h
 
