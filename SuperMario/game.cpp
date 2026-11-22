@@ -7,6 +7,11 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     scene->setSceneRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     setScene(scene);
 
+    levelNumber = 1;
+
+    // HUD: score, health bar, lives, level (always on screen)
+    hud = new HUD(scene);
+
     setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     setFrameStyle(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -27,6 +32,10 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
 
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
+}
+Game::~Game()
+{
+    delete hud;
 }
 void Game::gameLoop()
 {
