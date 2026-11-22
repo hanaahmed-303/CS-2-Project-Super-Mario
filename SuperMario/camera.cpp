@@ -19,11 +19,12 @@ void Camera::follow(QGraphicsItem *target)
     if (!target)
         return;
 
-    // Where is the middle of the target in the world?
     double targetCenter = target->sceneBoundingRect().center().x();
+    double wantedLeft = targetCenter - viewWidth / 2.0;
 
-    // Put the target in the middle of the screen
-    left = targetCenter - viewWidth / 2.0;
+    // One-way scrolling: the camera only ever moves forward (right)
+    if (wantedLeft > left)
+        left = wantedLeft;
 
     apply();
 }
