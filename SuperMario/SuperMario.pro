@@ -10,12 +10,14 @@ SOURCES += \
     game.cpp \
     gameobject.cpp \
     main.cpp \
-    messagescreen.cpp
+    messagescreen.cpp \
+    score.cpp
 
 HEADERS += \
     game.h \
     gameobject.h \
-    messagescreen.h
+    messagescreen.h \
+    score.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
