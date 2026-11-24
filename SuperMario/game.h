@@ -10,6 +10,7 @@
 #include "messagescreen.h"
 #include "hud.h"
 #include "camera.h"
+#include "player.h"
 
 enum class GameState {
     START_SCREEN,
@@ -27,6 +28,8 @@ class Game : public QGraphicsView
 public:
     explicit Game(QWidget *parent = nullptr);
     void startGame();
+    void restartLevel();
+    void gameOver();
 
     static const int WINDOW_WIDTH  = 800;
     static const int WINDOW_HEIGHT = 600;
@@ -44,6 +47,8 @@ protected:
 private slots:
     void gameLoop();
     void updateCamera();
+    void handlePlayerDeath();
+    void resetGame();
 
 private:
     QGraphicsScene *scene;
@@ -55,6 +60,7 @@ private:
     HUD *hud;
     int levelNumber;
     Camera *camera;
+    Player *player;
 };
 
 #endif // GAME_H

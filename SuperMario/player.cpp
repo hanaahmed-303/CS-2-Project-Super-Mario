@@ -89,3 +89,9 @@ void Player::takeDamage(int damage)
         damageCooldown = 60;
     }
 }
+
+
+void Player::resetLives()
+{
+    lives = MAX_LIVES;
+}

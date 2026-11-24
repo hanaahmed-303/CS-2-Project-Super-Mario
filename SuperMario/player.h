@@ -9,7 +9,8 @@ private:
     double speed = 4.0;
     double jumpStrength = 12.0;
 
-    int lives = 3;
+    static const int MAX_LIVES = 3;
+    int lives = MAX_LIVES;
     double spawnX;
     double spawnY;
 
@@ -27,6 +28,7 @@ public:
 
     int getLives() const;
     void loseLife();
+    void resetLives();
     void respawn();
     void setSpawnPoint(double x, double y);
 
