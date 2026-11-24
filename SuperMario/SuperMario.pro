@@ -12,6 +12,7 @@ SOURCES += \
     enemy.cpp \
     game.cpp \
     gameobject.cpp \
+    goomba.cpp \
     healthbar.cpp \
     hud.cpp \
     main.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     enemy.h \
     game.h \
     gameobject.h \
+    goomba.h \
     healthbar.h \
     hud.h \
     messagescreen.h \
