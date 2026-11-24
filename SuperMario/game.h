@@ -11,6 +11,8 @@
 #include "hud.h"
 #include "camera.h"
 #include "player.h"
+#include "level.h"
+#include "collisionmanager.h"
 
 enum class GameState {
     START_SCREEN,
@@ -54,6 +56,7 @@ private:
     QGraphicsScene *scene;
     QTimer *gameTimer;
     void handleInput();
+    void loadLevel(int n);
     QSet<int> keysPressed;
     GameState state;
     MessageScreen *message;
@@ -61,6 +64,7 @@ private:
     int levelNumber;
     Camera *camera;
     Player *player;
+    Level *level = nullptr;
 };
 
 #endif // GAME_H

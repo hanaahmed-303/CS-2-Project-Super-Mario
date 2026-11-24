@@ -1,10 +1,5 @@
 #include "game.h"
 
-// TEMPORARY floor height until Level has real ground
-static const double TEMP_GROUND_Y = 500;
-static const double TEMP_LEVEL_WIDTH = 3000;
-static const double TEMP_PIT_START = 1200;
-static const double TEMP_PIT_END   = 1350;
 
 Game::Game(QWidget *parent) : QGraphicsView(parent)
 {
@@ -27,25 +22,21 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     // Camera (must come AFTER setFixedSize, it reads the window size)
     camera = new Camera(this);
 
-    // TEMPORARY level size until Level exists (later: done in loadLevel)
-    scene->setSceneRect(0, 0, TEMP_LEVEL_WIDTH, WINDOW_HEIGHT);
-    camera->setLevelWidth(TEMP_LEVEL_WIDTH);
 
     // Mario
     player = new Player(100, 300, ":/images/mario.png");
     player->setZValue(10);          // above blocks, below HUD (100)
     scene->addItem(player);
     // TEMPORARY floor with a pit (visual only)
-    scene->addRect(0, TEMP_GROUND_Y, TEMP_PIT_START, 20,
-                   QPen(Qt::black), QBrush(Qt::darkGreen));
-    scene->addRect(TEMP_PIT_END, TEMP_GROUND_Y, TEMP_LEVEL_WIDTH - TEMP_PIT_END, 20,
-                   QPen(Qt::black), QBrush(Qt::darkGreen));
+
 
     // Message in the middle of the screen
     message = new MessageScreen();
     scene->addItem(message);
     message->showMessage("Click to start");
 
+    // Load the first level (creates the world and places Mario)
+    loadLevel(levelNumber);
 
     // 4. Game loop timer
     gameTimer = new QTimer(this);
@@ -57,6 +48,7 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
 }
 Game::~Game()
 {
+    delete level;
     delete hud;
     delete camera;
 
@@ -66,53 +58,43 @@ void Game::gameLoop()
     if (state != GameState::PLAYING)
         return;
 
+    // 1. Moving platforms move first (so they can carry Mario this frame)
+    level->updateAll();
+
+    // 2. Remember where Mario was, then let him move
+    QRectF previousBounds = player->getBounds();
     handleInput();
     player->update();
 
-    // TEMPORARY floor check (with a pit) until Level has real ground + collisions
-    double marioHeight = player->boundingRect().height();
-    double marioFeet   = player->y() + marioHeight;
-    double marioCenterX = player->x() + player->boundingRect().width() / 2;
-    bool overPit = marioCenterX > TEMP_PIT_START && marioCenterX < TEMP_PIT_END;
+    // 3. Collisions with the level (Mohamed's CollisionManager)
+    CollisionManager::resolveObstacles(player, previousBounds, level->getObstacles());
+    CollisionManager::checkHazards(player, level->getObstacles());
 
-    if (!overPit && marioFeet >= TEMP_GROUND_Y && marioFeet <= TEMP_GROUND_Y + 20) {
-        player->setY(TEMP_GROUND_Y - marioHeight);   // stand exactly on top
-        player->setOnGround(true);
-    } else {
-        player->setOnGround(false);
-    }
-
-    // Invisible wall at the left edge of the screen (one-way scrolling)
+    // 4. Invisible walls: screen's left edge, and the end of the level
     if (player->x() < camera->getLeft())
         player->setX(camera->getLeft());
 
-    // TEMPORARY wall at the end of the level (later: the flag ends the level)
+    double levelRight = level->getBounds().right();
     double marioWidth = player->boundingRect().width();
-    if (player->x() + marioWidth > TEMP_LEVEL_WIDTH)
-        player->setX(TEMP_LEVEL_WIDTH - marioWidth);
+    if (player->x() + marioWidth > levelRight)
+        player->setX(levelRight - marioWidth);
 
-    // Death: fell into a pit, or health reached 0
-    if (player->y() > WINDOW_HEIGHT || player->isDead()) {
+    // 5. Death: fell below the level, or health reached 0
+    if (player->y() > level->getBounds().bottom() || player->isDead()) {
         handlePlayerDeath();
-        return;     // skip the rest of this frame
+        return;
     }
 
+    // 6. Camera + HUD
     updateCamera();
-
-    // Show Mario's current health, lives and the level number
     hud->refresh(player->getHealth(), player->getMaxHealth(),
                  player->getLives(), levelNumber);
 }
-
 void Game::keyPressEvent(QKeyEvent *event)
 {
     if (event->isAutoRepeat())
         return;
     keysPressed.insert(event->key());
-
-
-    //if (event->key() == Qt::Key_H)
-        //player->takeDamage(25);
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
@@ -204,6 +186,29 @@ void Game::resetGame()
     hud->getScore()->reset();   // the ONLY place the score is reset
     player->resetLives();
 
-    restartLevel();             // Later: loadLevel(1) instead
+    loadLevel(levelNumber);     // rebuild Level 1 from scratch
     startGame();                // hide the message, state = PLAYING
+}
+
+void Game::loadLevel(int n)
+{
+    // Remove the previous level (deletes all its blocks, coins, flag...)
+    delete level;
+    level = new Level(scene);
+
+    QString error;
+    QString path = QString(":/levels/level%1.txt").arg(n);
+    if (!level->loadFromFile(path, &error)) {
+        qDebug() << "Could not load level" << n << ":" << error;
+        return;
+    }
+
+    // The camera needs the new level's width
+    camera->setLevelWidth(level->getBounds().width());
+
+    // Put Mario on the 'A' tile of the map
+    QPointF spawn = level->getPlayerSpawn();
+    player->setSpawnPoint(spawn.x(), spawn.y());
+    player->respawn();
+    camera->reset();
 }
