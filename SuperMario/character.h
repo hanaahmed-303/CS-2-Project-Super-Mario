@@ -21,10 +21,17 @@ public:
     void applyGravity();
     void move();
 
+    double getVelocityX() const;
+    double getVelocityY() const;
+    void setVelocityX(double velocity);
+    void setVelocityY(double velocity);
+    bool isOnGround() const;
+    virtual void setOnGround(bool grounded);
+
     virtual void takeDamage(int damage);
     int getHealth() const;
     int getMaxHealth() const;
     bool isDead() const;
 };
 
-#endif // CHARACTER_H
+#endif

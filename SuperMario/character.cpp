@@ -1,45 +1,32 @@
-#include "character.h"
-
-Character::Character(double x, double y, const QString &imagePath)
-    : GameObject(x, y, imagePath)
+double Character::getVelocityX() const
 {
+    return velocityX;
 }
 
-void Character::applyGravity()
+double Character::getVelocityY() const
 {
-    if (!onGround)
-    {
-        velocityY += gravity;
-    }
+    return velocityY;
 }
 
-void Character::move()
+void Character::setVelocityX(double velocity)
 {
-    setPos(x() + velocityX, y() + velocityY);
+    velocityX = velocity;
 }
 
-void Character::takeDamage(int damage)
+void Character::setVelocityY(double velocity)
 {
-    if (damage <= 0)
-        return;
-
-    health -= damage;
-
-    if (health < 0)
-        health = 0;
+    velocityY = velocity;
 }
 
-int Character::getHealth() const
+bool Character::isOnGround() const
 {
-    return health;
+    return onGround;
 }
 
-int Character::getMaxHealth() const
+void Character::setOnGround(bool grounded)
 {
-    return maxHealth;
-}
+    onGround = grounded;
 
-bool Character::isDead() const
-{
-    return health == 0;
+    if(grounded && velocityY > 0)
+        velocityY = 0;
 }
