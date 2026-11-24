@@ -13,6 +13,8 @@ private:
     double spawnX;
     double spawnY;
 
+    int damageCooldown = 0;
+
 public:
     Player(double x, double y, const QString &imagePath);
 
@@ -27,6 +29,8 @@ public:
     void loseLife();
     void respawn();
     void setSpawnPoint(double x, double y);
+
+    void takeDamage(int damage) override;
 };
 
 #endif // PLAYER_H

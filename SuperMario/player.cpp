@@ -9,6 +9,11 @@ Player::Player(double x, double y, const QString &imagePath)
 
 void Player::update()
 {
+    if (damageCooldown > 0)
+    {
+        damageCooldown--;
+    }
+
     applyGravity();
     move();
 }
@@ -67,10 +72,20 @@ void Player::respawn()
     velocityX = 0;
     velocityY = 0;
     onGround = false;
+    damageCooldown = 60;
 }
 
 void Player::setSpawnPoint(double x, double y)
 {
     spawnX = x;
     spawnY = y;
+}
+
+void Player::takeDamage(int damage)
+{
+    if (damageCooldown == 0 && damage > 0 && !isDead())
+    {
+        Character::takeDamage(damage);
+        damageCooldown = 60;
+    }
 }
