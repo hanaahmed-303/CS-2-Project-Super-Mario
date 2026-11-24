@@ -14,6 +14,7 @@ SOURCES += \
     obstacle.cpp \
     camera.cpp \
     character.cpp \
+    enemy.cpp \
     game.cpp \
     gameobject.cpp \
     healthbar.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     obstacle.h \
     camera.h \
     character.h \
+    enemy.h \
     game.h \
     gameobject.h \
     healthbar.h \
