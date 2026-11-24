@@ -146,9 +146,11 @@ void Game::mousePressEvent(QMouseEvent *event)
     if (state == GameState::START_SCREEN) {
         startGame();
     }
+    else if (state == GameState::GAME_OVER) {
+        resetGame();
+    }
     // Later:
-    // else if (state == GameState::GAME_OVER) { restart from Level 1 }
-    // else if (state == GameState::VICTORY)   { exitGame(); }
+    // else if (state == GameState::VICTORY) { exitGame(); }
 
     QGraphicsView::mousePressEvent(event);
 }
@@ -180,14 +182,38 @@ void Game::handlePlayerDeath()
 {
     player->loseLife();
 
-    // Next commit: if no lives are left → gameOver();
+    if (player->getLives() == 0) {
+        gameOver();
+        return;
+    }
 
     restartLevel();
 }
-
 void Game::restartLevel()
 {
     // Later (with Level): reload the level so enemies and coins come back
     player->respawn();      // back to start, full health, short invincibility
     camera->reset();        // camera back to the beginning of the level
+}
+
+
+void Game::gameOver()
+{
+    state = GameState::GAME_OVER;      // freezes the game loop
+
+    // Show the final numbers (the loop is frozen, so refresh once here)
+    hud->refresh(player->getHealth(), player->getMaxHealth(),
+                 player->getLives(), levelNumber);
+
+    message->showMessage("GAME OVER\nClick to restart");
+}
+
+void Game::resetGame()
+{
+    levelNumber = 1;
+    hud->getScore()->reset();   // the ONLY place the score is reset
+    player->resetLives();
+
+    restartLevel();             // Later: loadLevel(1) instead
+    startGame();                // hide the message, state = PLAYING
 }
