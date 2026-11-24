@@ -15,6 +15,7 @@ SOURCES += \
     hud.cpp \
     main.cpp \
     messagescreen.cpp \
+    player.cpp \
     score.cpp
 
 HEADERS += \
@@ -25,6 +26,7 @@ HEADERS += \
     healthbar.h \
     hud.h \
     messagescreen.h \
+    player.h \
     score.h
 
 # Default rules for deployment.
