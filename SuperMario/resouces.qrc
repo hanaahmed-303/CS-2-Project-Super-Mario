@@ -9,5 +9,6 @@
         <file>images/platform.png</file>
         <file>images/spike.png</file>
         <file>levels/level1.txt</file>
+        <file>images/goomba.png</file>
     </qresource>
 </RCC>
