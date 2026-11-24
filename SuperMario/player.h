@@ -5,10 +5,16 @@
 
 class Player : public Character
 {
+private:
+    double speed = 4.0;
+
 public:
     Player(double x, double y, const QString &imagePath);
 
     void update() override;
+    void moveLeft();
+    void moveRight();
+    void stopMoving();
 };
 
 #endif // PLAYER_H
