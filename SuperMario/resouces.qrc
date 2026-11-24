@@ -19,5 +19,12 @@
         <file>images/mario_dead.png</file>
         <file>images/question.png</file>
         <file>images/used_block.png</file>
+        <file>sounds/theme.mp3</file>
+        <file>sounds/jump.wav</file>
+        <file>sounds/coin.wav</file>
+        <file>sounds/stomp.wav</file>
+        <file>sounds/death.wav</file>
+        <file>sounds/gameover.wav</file>
+        <file>sounds/flagpole.wav</file>
     </qresource>
 </RCC>
