@@ -1,4 +1,5 @@
 #include "collisionmanager.h"
+#include <cmath>
 
 void CollisionManager::resolveObstacles(
     Character *character,
@@ -12,11 +13,53 @@ void CollisionManager::resolveObstacles(
         StaticObstacle *solid =
             dynamic_cast<StaticObstacle *>(obstacle);
 
-        if(!solid || solid->isHazard())
+        MovingObstacle *platform =
+            dynamic_cast<MovingObstacle *>(obstacle);
+
+        if(solid && solid->isHazard())
+            continue;
+
+        if(!solid && !platform)
             continue;
 
         QRectF current = character->getBounds();
         QRectF block = obstacle->getBounds();
+
+        bool horizontalOverlap =
+            current.right() > block.left() &&
+            current.left() < block.right();
+
+        if(platform)
+        {
+            QPointF displacement = platform->getDisplacement();
+            QRectF oldBlock = block.translated(-displacement);
+
+            if(std::abs(previousBounds.bottom() -
+                         oldBlock.top()) < 1.0 &&
+                previousBounds.right() > oldBlock.left() &&
+                previousBounds.left() < oldBlock.right() &&
+                character->getVelocityY() >= 0)
+            {
+                character->moveBy(displacement.x(),
+                                  displacement.y());
+
+                current = character->getBounds();
+
+                character->setY(character->y() +
+                                block.top() - current.bottom());
+
+                character->setOnGround(true);
+                continue;
+            }
+        }
+
+        if(horizontalOverlap &&
+            std::abs(current.bottom() - block.top()) < 0.01 &&
+            character->getVelocityY() >= 0)
+        {
+            character->setOnGround(true);
+            continue;
+        }
 
         if(!current.intersects(block))
             continue;
