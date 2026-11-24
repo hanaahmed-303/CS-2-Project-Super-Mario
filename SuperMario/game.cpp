@@ -3,6 +3,8 @@
 // TEMPORARY floor height until Level has real ground
 static const double TEMP_GROUND_Y = 500;
 static const double TEMP_LEVEL_WIDTH = 3000;
+static const double TEMP_PIT_START = 1200;
+static const double TEMP_PIT_END   = 1350;
 
 Game::Game(QWidget *parent) : QGraphicsView(parent)
 {
@@ -32,10 +34,11 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     player = new Player(100, 300, ":/images/mario.png");
     player->setZValue(10);          // above blocks, below HUD (100)
     scene->addItem(player);
-    // TEMPORARY floor + markers (visual only)
-    scene->addRect(0, TEMP_GROUND_Y, TEMP_LEVEL_WIDTH, 20, QPen(Qt::black), QBrush(Qt::darkGreen));
-    for (int x = 200; x < TEMP_LEVEL_WIDTH; x += 300)
-        scene->addRect(x, TEMP_GROUND_Y - 40, 40, 40, QPen(Qt::black), QBrush(Qt::gray));
+    // TEMPORARY floor with a pit (visual only)
+    scene->addRect(0, TEMP_GROUND_Y, TEMP_PIT_START, 20,
+                   QPen(Qt::black), QBrush(Qt::darkGreen));
+    scene->addRect(TEMP_PIT_END, TEMP_GROUND_Y, TEMP_LEVEL_WIDTH - TEMP_PIT_END, 20,
+                   QPen(Qt::black), QBrush(Qt::darkGreen));
 
     // Message in the middle of the screen
     message = new MessageScreen();
@@ -65,9 +68,13 @@ void Game::gameLoop()
     handleInput();
     player->update();
 
-    // TEMPORARY floor check until Level has real ground + collisions
+    // TEMPORARY floor check (with a pit) until Level has real ground + collisions
     double marioHeight = player->boundingRect().height();
-    if (player->y() + marioHeight >= TEMP_GROUND_Y) {
+    double marioFeet   = player->y() + marioHeight;
+    double marioCenterX = player->x() + player->boundingRect().width() / 2;
+    bool overPit = marioCenterX > TEMP_PIT_START && marioCenterX < TEMP_PIT_END;
+
+    if (!overPit && marioFeet >= TEMP_GROUND_Y && marioFeet <= TEMP_GROUND_Y + 20) {
         player->setY(TEMP_GROUND_Y - marioHeight);   // stand exactly on top
         player->setOnGround(true);
     } else {
@@ -82,6 +89,12 @@ void Game::gameLoop()
     double marioWidth = player->boundingRect().width();
     if (player->x() + marioWidth > TEMP_LEVEL_WIDTH)
         player->setX(TEMP_LEVEL_WIDTH - marioWidth);
+
+    // Death: fell into a pit, or health reached 0
+    if (player->y() > WINDOW_HEIGHT || player->isDead()) {
+        handlePlayerDeath();
+        return;     // skip the rest of this frame
+    }
 
     updateCamera();
 
@@ -160,4 +173,21 @@ void Game::updateCamera()
         qDebug() << "camera left:" << camera->getLeft()
                  << "| real view left:" << viewLeft
                  << "| sceneRect:" << scene->sceneRect();
+}
+
+
+void Game::handlePlayerDeath()
+{
+    player->loseLife();
+
+    // Next commit: if no lives are left → gameOver();
+
+    restartLevel();
+}
+
+void Game::restartLevel()
+{
+    // Later (with Level): reload the level so enemies and coins come back
+    player->respawn();      // back to start, full health, short invincibility
+    camera->reset();        // camera back to the beginning of the level
 }

@@ -28,6 +28,7 @@ class Game : public QGraphicsView
 public:
     explicit Game(QWidget *parent = nullptr);
     void startGame();
+    void restartLevel();
 
     static const int WINDOW_WIDTH  = 800;
     static const int WINDOW_HEIGHT = 600;
@@ -45,6 +46,7 @@ protected:
 private slots:
     void gameLoop();
     void updateCamera();
+    void handlePlayerDeath();
 
 private:
     QGraphicsScene *scene;
