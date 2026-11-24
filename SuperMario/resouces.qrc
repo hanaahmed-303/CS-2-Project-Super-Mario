@@ -1,5 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>images/mario.png</file>
+        <file>images/brick.png</file>
+        <file>images/coin.png</file>
+        <file>images/flag.png</file>
+        <file>images/ground.png</file>
+        <file>images/pipe.png</file>
+        <file>images/platform.png</file>
+        <file>images/spike.png</file>
+        <file>levels/level1.txt</file>
     </qresource>
 </RCC>
