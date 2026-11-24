@@ -83,6 +83,15 @@ void Game::gameLoop()
             hud->getScore()->increase(100);    // stomped!
     }
 
+    // Coins: touching one adds its points to the score
+    for (Collectible *item : level->getCollectibles()) {
+        if (item->isCollected())
+            continue;
+
+        if (player->getBounds().intersects(item->getBounds()))
+            hud->getScore()->increase(item->collect());
+    }
+
     // 4. Invisible walls: screen's left edge, and the end of the level
     if (player->x() < camera->getLeft())
         player->setX(camera->getLeft());
@@ -144,8 +153,9 @@ void Game::mousePressEvent(QMouseEvent *event)
     else if (state == GameState::GAME_OVER) {
         resetGame();
     }
-    // Later:
-    // else if (state == GameState::VICTORY) { exitGame(); }
+    else if (state == GameState::VICTORY) {
+        exitGame();
+    }
 
     QGraphicsView::mousePressEvent(event);
 }
@@ -203,7 +213,7 @@ void Game::resetGame()
     startGame();                // hide the message, state = PLAYING
 }
 
-void Game::loadLevel(int n)
+bool Game::loadLevel(int n)
 {
     clearEnemies();
     delete level;
@@ -213,18 +223,17 @@ void Game::loadLevel(int n)
     QString path = QString(":/levels/level%1.txt").arg(n);
     if (!level->loadFromFile(path, &error)) {
         qDebug() << "Could not load level" << n << ":" << error;
-        return;
+        return false;                                  // ← changed
     }
 
-    // The camera needs the new level's width
     camera->setLevelWidth(level->getBounds().width());
-
-    // Put Mario on the 'A' tile of the map
     QPointF spawn = level->getPlayerSpawn();
     player->setSpawnPoint(spawn.x(), spawn.y());
     player->respawn();
     camera->reset();
+
     spawnEnemies();
+    return true;                                       // ← new
 }
 
 void Game::spawnEnemies()
@@ -241,4 +250,44 @@ void Game::clearEnemies()
 {
     qDeleteAll(enemies);   // delete every Goomba (also removes it from the scene)
     enemies.clear();       // empty the list
+}
+
+void Game::levelComplete()
+{
+    state = GameState::LEVEL_COMPLETE;     // freeze the game
+    hud->getScore()->increase(500);        // bonus for finishing the level
+    hud->refresh(player->getHealth(), player->getMaxHealth(),
+                 player->getLives(), levelNumber);
+
+    message->showMessage("LEVEL " + QString::number(levelNumber) + " COMPLETE!");
+
+    // Wait 2 seconds, then go to the next level
+    QTimer::singleShot(2000, this, &Game::nextLevel);
+}
+
+void Game::nextLevel()
+{
+    levelNumber++;
+
+    // No more levels (or the next file doesn't exist yet) → the player has won
+    if (levelNumber > MAX_LEVELS || !loadLevel(levelNumber)) {
+        winGame();
+        return;
+    }
+
+    keysPressed.clear();     // don't keep running from the previous level
+    startGame();             // hide the message, state = PLAYING
+}
+
+void Game::winGame()
+{
+    state = GameState::VICTORY;
+    message->showMessage("CONGRATULATIONS!\nYou finished the game\nScore: "
+                         + QString::number(hud->getScore()->getScore())
+                         + "\nClick to exit");
+}
+
+void Game::exitGame()
+{
+    close();      // closes the window → the program ends
 }
