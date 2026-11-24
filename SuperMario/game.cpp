@@ -2,6 +2,7 @@
 
 // TEMPORARY floor height until Level has real ground
 static const double TEMP_GROUND_Y = 500;
+static const double TEMP_LEVEL_WIDTH = 3000;
 
 Game::Game(QWidget *parent) : QGraphicsView(parent)
 {
@@ -23,13 +24,18 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     // Camera (must come AFTER setFixedSize, it reads the window size)
     camera = new Camera(this);
 
+    // TEMPORARY level size until Level exists (later: done in loadLevel)
+    scene->setSceneRect(0, 0, TEMP_LEVEL_WIDTH, WINDOW_HEIGHT);
+    camera->setLevelWidth(TEMP_LEVEL_WIDTH);
+
     // Mario
     player = new Player(100, 300, ":/images/mario.png");
     player->setZValue(10);          // above blocks, below HUD (100)
     scene->addItem(player);
-
-    // TEMPORARY floor (visual only)
-    scene->addRect(0, TEMP_GROUND_Y, 3000, 20, QPen(Qt::black), QBrush(Qt::darkGreen));
+    // TEMPORARY floor + markers (visual only)
+    scene->addRect(0, TEMP_GROUND_Y, TEMP_LEVEL_WIDTH, 20, QPen(Qt::black), QBrush(Qt::darkGreen));
+    for (int x = 200; x < TEMP_LEVEL_WIDTH; x += 300)
+        scene->addRect(x, TEMP_GROUND_Y - 40, 40, 40, QPen(Qt::black), QBrush(Qt::gray));
 
     // Message in the middle of the screen
     message = new MessageScreen();
@@ -67,6 +73,15 @@ void Game::gameLoop()
     } else {
         player->setOnGround(false);
     }
+
+    // Invisible wall at the left edge of the screen (one-way scrolling)
+    if (player->x() < camera->getLeft())
+        player->setX(camera->getLeft());
+
+    // TEMPORARY wall at the end of the level (later: the flag ends the level)
+    double marioWidth = player->boundingRect().width();
+    if (player->x() + marioWidth > TEMP_LEVEL_WIDTH)
+        player->setX(TEMP_LEVEL_WIDTH - marioWidth);
 
     updateCamera();
 }
@@ -124,6 +139,16 @@ void Game::startGame()
 }
 void Game::updateCamera()
 {
-    // Later (when Player exists): camera->follow(player);
-    hud->followCamera(camera->getLeft());
+    camera->follow(player);
+
+    // Where is the window REALLY showing right now?
+    double viewLeft = mapToScene(0, 0).x();
+    hud->followCamera(viewLeft);
+
+    // TEMPORARY debug: compare the camera's idea with reality
+    static int frame = 0;
+    if (++frame % 60 == 0)
+        qDebug() << "camera left:" << camera->getLeft()
+                 << "| real view left:" << viewLeft
+                 << "| sceneRect:" << scene->sceneRect();
 }

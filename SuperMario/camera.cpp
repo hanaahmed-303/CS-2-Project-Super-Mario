@@ -2,9 +2,7 @@
 
 Camera::Camera(QGraphicsView *view)
     : view(view),
-    viewWidth(view->width()),
-    viewHeight(view->height()),
-    levelWidth(view->width()),
+    levelWidth(0),
     left(0)
 {
 }
@@ -20,7 +18,8 @@ void Camera::follow(QGraphicsItem *target)
         return;
 
     double targetCenter = target->sceneBoundingRect().center().x();
-    double wantedLeft = targetCenter - viewWidth / 2.0;
+    double wantedLeft = targetCenter - view->width() / 2.0;
+
 
     // One-way scrolling: the camera only ever moves forward (right)
     if (wantedLeft > left)
@@ -42,13 +41,12 @@ double Camera::getLeft() const
 
 void Camera::apply()
 {
-    // Move the window so its left edge is at "left"
-    view->centerOn(left + viewWidth / 2.0, viewHeight / 2.0);
+    view->centerOn(left + view->width() / 2.0, view->height() / 2.0);
 }
 
 void Camera::clampToLevel()
 {
-    double maxLeft = levelWidth - viewWidth;   // furthest the camera may go
+    double maxLeft = levelWidth - view->width();  // furthest the camera may go
     if (maxLeft < 0)
         maxLeft = 0;                            // level shorter than the screen
 
