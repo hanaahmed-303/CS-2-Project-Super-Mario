@@ -23,6 +23,7 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setWindowTitle("Super Mario");
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     // Camera (must come AFTER setFixedSize, it reads the window size)
     camera = new Camera(this);
 
@@ -108,11 +109,10 @@ void Game::keyPressEvent(QKeyEvent *event)
     if (event->isAutoRepeat())
         return;
     keysPressed.insert(event->key());
-    // TEMPORARY test: press H to take damage
 
 
-    if (event->key() == Qt::Key_H)
-        player->takeDamage(25);
+    //if (event->key() == Qt::Key_H)
+        //player->takeDamage(25);
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
@@ -164,17 +164,7 @@ void Game::startGame()
 void Game::updateCamera()
 {
     camera->follow(player);
-
-    // Where is the window REALLY showing right now?
-    double viewLeft = mapToScene(0, 0).x();
-    hud->followCamera(viewLeft);
-
-    // TEMPORARY debug: compare the camera's idea with reality
-    static int frame = 0;
-    if (++frame % 60 == 0)
-        qDebug() << "camera left:" << camera->getLeft()
-                 << "| real view left:" << viewLeft
-                 << "| sceneRect:" << scene->sceneRect();
+    hud->followCamera(mapToScene(0, 0).x());
 }
 
 
