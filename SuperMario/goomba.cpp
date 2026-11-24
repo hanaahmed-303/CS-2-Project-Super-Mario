@@ -18,3 +18,11 @@ void Goomba::update()
     applyGravity();
     move();
 }
+
+void Goomba::stomp()
+{
+    takeDamage(health);
+    velocityX = 0;
+    velocityY = 0;
+    hide();
+}

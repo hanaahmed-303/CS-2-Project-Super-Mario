@@ -9,6 +9,7 @@ public:
     Goomba(double x, double y, const QString &imagePath);
 
     void update() override;
+    void stomp();
 };
 
 #endif
