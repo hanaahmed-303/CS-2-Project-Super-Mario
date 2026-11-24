@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include <utility>
 
 Game::Game(QWidget *parent) : QGraphicsView(parent)
 {
@@ -48,6 +48,7 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
 }
 Game::~Game()
 {
+    clearEnemies();
     delete level;
     delete hud;
     delete camera;
@@ -69,6 +70,18 @@ void Game::gameLoop()
     // 3. Collisions with the level (Mohamed's CollisionManager)
     CollisionManager::resolveObstacles(player, previousBounds, level->getObstacles());
     CollisionManager::checkHazards(player, level->getObstacles());
+
+    // Enemies: move, collide with blocks, then check against Mario
+    for (Goomba *goomba : std::as_const(enemies)) {        if (goomba->isDead())
+            continue;
+
+        QRectF goombaPrevious = goomba->getBounds();
+        goomba->update();
+        CollisionManager::resolveObstacles(goomba, goombaPrevious, level->getObstacles());
+
+        if (CollisionManager::checkEnemyCollision(player, goomba, previousBounds))
+            hud->getScore()->increase(100);    // stomped!
+    }
 
     // 4. Invisible walls: screen's left edge, and the end of the level
     if (player->x() < camera->getLeft())
@@ -192,7 +205,7 @@ void Game::resetGame()
 
 void Game::loadLevel(int n)
 {
-    // Remove the previous level (deletes all its blocks, coins, flag...)
+    clearEnemies();
     delete level;
     level = new Level(scene);
 
@@ -211,4 +224,21 @@ void Game::loadLevel(int n)
     player->setSpawnPoint(spawn.x(), spawn.y());
     player->respawn();
     camera->reset();
+    spawnEnemies();
+}
+
+void Game::spawnEnemies()
+{
+    for (const QPointF &pos : level->getEnemySpawns()) {
+        Goomba *goomba = new Goomba(pos.x(), pos.y(), ":/images/goomba.png");
+        goomba->setZValue(5);          // above blocks, below Mario (10)
+        scene->addItem(goomba);
+        enemies.append(goomba);
+    }
+}
+
+void Game::clearEnemies()
+{
+    qDeleteAll(enemies);   // delete every Goomba (also removes it from the scene)
+    enemies.clear();       // empty the list
 }
