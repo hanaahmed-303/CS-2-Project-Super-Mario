@@ -1,4 +1,5 @@
 #include "obstacle.h"
+#include "level.h"
 #include <algorithm>
 
 Ground::Ground(double x, double y)
@@ -29,7 +30,7 @@ MovingPlatform::MovingPlatform(double x, double y)
 
 void MovingPlatform::update()
 {
-    const double endX = startX + 96;
+    const double endX = startX + 3 * Level::TILE_SIZE;
     const double nextX = std::clamp(x() + speed, startX, endX);
     displacement = QPointF(nextX - x(), 0);
     setX(nextX);

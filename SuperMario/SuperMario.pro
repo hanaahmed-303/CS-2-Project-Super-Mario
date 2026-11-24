@@ -10,6 +10,7 @@ SOURCES += \
     background.cpp \
     collectible.cpp \
     flag.cpp \
+    level.cpp \
     obstacle.cpp \
     camera.cpp \
     character.cpp \
@@ -26,6 +27,7 @@ HEADERS += \
     background.h \
     collectible.h \
     flag.h \
+    level.h \
     obstacle.h \
     camera.h \
     character.h \
@@ -46,5 +48,6 @@ RESOURCES += \
     background.cpp \
     collectible.cpp \
     flag.cpp \
+    level.cpp \
     obstacle.cpp \
     resouces.qrc
