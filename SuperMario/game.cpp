@@ -13,6 +13,9 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     // HUD: score, health bar, lives, level (always on screen)
     hud = new HUD(scene);
 
+    // Sound: music + effects
+    sound = new SoundManager(this);
+
     setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     setFrameStyle(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -164,7 +167,8 @@ void Game::startGame()
 {
     message->hideMessage();
     state = GameState::PLAYING;
-    setFocus();        // make sure the keyboard works right after clicking
+    setFocus();
+    sound->playMusic();          // ← NEW: background music
 }
 void Game::updateCamera()
 {

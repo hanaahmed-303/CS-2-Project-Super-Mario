@@ -17,6 +17,7 @@
 #include "goomba.h"
 #include "collectible.h"
 #include "flag.h"
+#include "soundmanager.h"
 
 enum class GameState {
     START_SCREEN,
@@ -73,6 +74,7 @@ private:
     HUD *hud;
     int levelNumber;
     Camera *camera;
+    SoundManager *sound;
     Player *player;
     Level *level = nullptr;
     QList<Goomba *> enemies;
