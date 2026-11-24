@@ -10,6 +10,7 @@
 #include "messagescreen.h"
 #include "hud.h"
 #include "camera.h"
+#include "player.h"
 
 enum class GameState {
     START_SCREEN,
@@ -55,6 +56,7 @@ private:
     HUD *hud;
     int levelNumber;
     Camera *camera;
+    Player *player;
 };
 
 #endif // GAME_H

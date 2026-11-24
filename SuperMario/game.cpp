@@ -1,5 +1,8 @@
 #include "game.h"
 
+// TEMPORARY floor height until Level has real ground
+static const double TEMP_GROUND_Y = 500;
+
 Game::Game(QWidget *parent) : QGraphicsView(parent)
 {
     state = GameState::START_SCREEN;
@@ -19,6 +22,14 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     setWindowTitle("Super Mario");
     // Camera (must come AFTER setFixedSize, it reads the window size)
     camera = new Camera(this);
+
+    // Mario
+    player = new Player(100, 300, ":/images/mario.png");
+    player->setZValue(10);          // above blocks, below HUD (100)
+    scene->addItem(player);
+
+    // TEMPORARY floor (visual only)
+    scene->addRect(0, TEMP_GROUND_Y, 3000, 20, QPen(Qt::black), QBrush(Qt::darkGreen));
 
     // Message in the middle of the screen
     message = new MessageScreen();
@@ -46,10 +57,18 @@ void Game::gameLoop()
         return;
 
     handleInput();
-    updateCamera();
+    player->update();
 
-    // Later: update player & enemies, check collisions,
-    // update HUD, move camera.
+    // TEMPORARY floor check until Level has real ground + collisions
+    double marioHeight = player->boundingRect().height();
+    if (player->y() + marioHeight >= TEMP_GROUND_Y) {
+        player->setY(TEMP_GROUND_Y - marioHeight);   // stand exactly on top
+        player->setOnGround(true);
+    } else {
+        player->setOnGround(false);
+    }
+
+    updateCamera();
 }
 
 void Game::keyPressEvent(QKeyEvent *event)
@@ -72,11 +91,17 @@ void Game::handleInput()
     bool right = keysPressed.contains(Qt::Key_Right) || keysPressed.contains(Qt::Key_D);
     bool jump  = keysPressed.contains(Qt::Key_Space) || keysPressed.contains(Qt::Key_Up)
                 || keysPressed.contains(Qt::Key_W);
+    // Horizontal movement
+    if (left)
+        player->moveLeft();
+    else if (right)
+        player->moveRight();
+    else
+        player->stopMoving();
 
-    // Later: if (left) player->moveLeft(); else if (right) player->moveRight();
-    //        else player->stop();  if (jump) player->jump();
-
-    Q_UNUSED(left); Q_UNUSED(right); Q_UNUSED(jump);
+    // Jump
+    if (jump)
+        player->jump();
 }
 
 void Game::mousePressEvent(QMouseEvent *event)
