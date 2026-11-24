@@ -84,6 +84,10 @@ void Game::gameLoop()
         player->setX(TEMP_LEVEL_WIDTH - marioWidth);
 
     updateCamera();
+
+    // Show Mario's current health, lives and the level number
+    hud->refresh(player->getHealth(), player->getMaxHealth(),
+                 player->getLives(), levelNumber);
 }
 
 void Game::keyPressEvent(QKeyEvent *event)
@@ -91,6 +95,11 @@ void Game::keyPressEvent(QKeyEvent *event)
     if (event->isAutoRepeat())
         return;
     keysPressed.insert(event->key());
+    // TEMPORARY test: press H to take damage
+
+
+    if (event->key() == Qt::Key_H)
+        player->takeDamage(25);
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
