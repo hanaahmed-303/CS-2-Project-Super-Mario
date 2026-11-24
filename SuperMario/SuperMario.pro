@@ -51,9 +51,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    background.cpp \
-    collectible.cpp \
-    flag.cpp \
-    level.cpp \
-    obstacle.cpp \
     resouces.qrc

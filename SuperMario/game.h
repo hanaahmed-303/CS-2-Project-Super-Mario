@@ -7,10 +7,16 @@
 #include <QKeyEvent>
 #include <QSet>
 #include <QMouseEvent>
+#include <QList>
 #include "messagescreen.h"
 #include "hud.h"
 #include "camera.h"
 #include "player.h"
+#include "level.h"
+#include "collisionmanager.h"
+#include "goomba.h"
+#include "collectible.h"
+#include "flag.h"
 
 enum class GameState {
     START_SCREEN,
@@ -30,6 +36,9 @@ public:
     void startGame();
     void restartLevel();
     void gameOver();
+    void nextLevel();
+    void winGame();
+    void exitGame();
 
     static const int WINDOW_WIDTH  = 800;
     static const int WINDOW_HEIGHT = 600;
@@ -54,6 +63,10 @@ private:
     QGraphicsScene *scene;
     QTimer *gameTimer;
     void handleInput();
+    bool loadLevel(int n);
+    void spawnEnemies();
+    void clearEnemies();
+    void levelComplete();
     QSet<int> keysPressed;
     GameState state;
     MessageScreen *message;
@@ -61,6 +74,8 @@ private:
     int levelNumber;
     Camera *camera;
     Player *player;
+    Level *level = nullptr;
+    QList<Goomba *> enemies;
 };
 
 #endif // GAME_H

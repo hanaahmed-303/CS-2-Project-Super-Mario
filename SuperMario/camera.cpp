@@ -25,6 +25,7 @@ void Camera::follow(QGraphicsItem *target)
     if (wantedLeft > left)
         left = wantedLeft;
 
+    clampToLevel();
     apply();
 }
 
