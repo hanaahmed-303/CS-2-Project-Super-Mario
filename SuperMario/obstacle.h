@@ -45,4 +45,11 @@ public:
     bool isHazard() const override { return false; }
 };
 
+class Spike : public StaticObstacle
+{
+public:
+    Spike(double x, double y);
+    bool isHazard() const override { return true; }
+};
+
 #endif

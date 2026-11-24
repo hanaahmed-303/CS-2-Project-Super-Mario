@@ -15,3 +15,8 @@ Pipe::Pipe(double x, double y)
     : StaticObstacle(x, y, QStringLiteral(":/images/pipe.png"))
 {
 }
+
+Spike::Spike(double x, double y)
+    : StaticObstacle(x, y, QStringLiteral(":/images/spike.png"))
+{
+}
