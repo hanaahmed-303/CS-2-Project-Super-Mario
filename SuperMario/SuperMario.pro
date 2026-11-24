@@ -9,6 +9,7 @@ CONFIG += c++17
 SOURCES += \
     background.cpp \
     collectible.cpp \
+    flag.cpp \
     obstacle.cpp \
     camera.cpp \
     character.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 HEADERS += \
     background.h \
     collectible.h \
+    flag.h \
     obstacle.h \
     camera.h \
     character.h \
@@ -43,5 +45,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     background.cpp \
     collectible.cpp \
+    flag.cpp \
     obstacle.cpp \
     resouces.qrc
