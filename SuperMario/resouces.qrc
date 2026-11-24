@@ -10,5 +10,14 @@
         <file>images/spike.png</file>
         <file>levels/level1.txt</file>
         <file>images/goomba.png</file>
+        <file>images/goomba_walk2.png</file>
+        <file>images/goomba_flat.png</file>
+        <file>images/mario_walk1.png</file>
+        <file>images/mario_walk2.png</file>
+        <file>images/mario_walk3.png</file>
+        <file>images/mario_jump.png</file>
+        <file>images/mario_dead.png</file>
+        <file>images/question.png</file>
+        <file>images/used_block.png</file>
     </qresource>
 </RCC>
