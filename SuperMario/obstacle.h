@@ -52,4 +52,17 @@ public:
     bool isHazard() const override { return true; }
 };
 
+class MovingPlatform : public MovingObstacle
+{
+public:
+    MovingPlatform(double x, double y);
+    void update() override;
+    QPointF getDisplacement() const override { return displacement; }
+
+private:
+    double startX;
+    double speed = 2;
+    QPointF displacement;
+};
+
 #endif
