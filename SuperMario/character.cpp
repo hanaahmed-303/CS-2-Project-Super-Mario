@@ -7,10 +7,8 @@ Character::Character(double x, double y, const QString &imagePath)
 
 void Character::applyGravity()
 {
-    if (!onGround)
-    {
+    if(!onGround)
         velocityY += gravity;
-    }
 }
 
 void Character::move()
@@ -20,12 +18,12 @@ void Character::move()
 
 void Character::takeDamage(int damage)
 {
-    if (damage <= 0)
+    if(damage <= 0)
         return;
 
     health -= damage;
 
-    if (health < 0)
+    if(health < 0)
         health = 0;
 }
 
@@ -42,4 +40,37 @@ int Character::getMaxHealth() const
 bool Character::isDead() const
 {
     return health == 0;
+}
+
+double Character::getVelocityX() const
+{
+    return velocityX;
+}
+
+double Character::getVelocityY() const
+{
+    return velocityY;
+}
+
+void Character::setVelocityX(double velocity)
+{
+    velocityX = velocity;
+}
+
+void Character::setVelocityY(double velocity)
+{
+    velocityY = velocity;
+}
+
+bool Character::isOnGround() const
+{
+    return onGround;
+}
+
+void Character::setOnGround(bool grounded)
+{
+    onGround = grounded;
+
+    if(grounded && velocityY > 0)
+        velocityY = 0;
 }

@@ -9,6 +9,7 @@ CONFIG += c++17
 SOURCES += \
     background.cpp \
     collectible.cpp \
+    collisionmanager.cpp \
     flag.cpp \
     level.cpp \
     obstacle.cpp \
@@ -28,6 +29,7 @@ SOURCES += \
 HEADERS += \
     background.h \
     collectible.h \
+    collisionmanager.h \
     flag.h \
     level.h \
     obstacle.h \
