@@ -186,9 +186,9 @@ void Game::handlePlayerDeath()
 }
 void Game::restartLevel()
 {
-    // Later (with Level): reload the level so enemies and coins come back
-    player->respawn();      // back to start, full health, short invincibility
-    camera->reset();        // camera back to the beginning of the level
+    // Rebuild the current level: coins and Goombas come back,
+    // Mario returns to the start with full health, camera resets.
+    loadLevel(levelNumber);
 }
 
 
