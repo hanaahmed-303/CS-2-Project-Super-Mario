@@ -8,6 +8,7 @@ CONFIG += c++17
 
 SOURCES += \
     camera.cpp \
+    character.cpp \
     game.cpp \
     gameobject.cpp \
     healthbar.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     camera.h \
+    character.h \
     game.h \
     gameobject.h \
     healthbar.h \
