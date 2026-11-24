@@ -23,3 +23,14 @@ void Enemy::setPatrolRange(double start, double end)
     patrolStart = start;
     patrolEnd = end;
 }
+
+void Enemy::reverseDirection()
+{
+    direction = -direction;
+    velocityX = patrolSpeed * direction;
+}
+
+int Enemy::getContactDamage() const
+{
+    return contactDamage;
+}

@@ -10,6 +10,7 @@ protected:
     double patrolStart;
     double patrolEnd;
     int direction = -1;
+    int contactDamage = 20;
 
 public:
     Enemy(double x, double y, const QString &imagePath);
@@ -17,6 +18,8 @@ public:
     virtual void update() = 0;
     void patrol();
     void setPatrolRange(double start, double end);
+    void reverseDirection();
+    int getContactDamage() const;
 };
 
 #endif
