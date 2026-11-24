@@ -94,3 +94,22 @@ void CollisionManager::resolveObstacles(
         }
     }
 }
+void CollisionManager::checkHazards(
+    Player *player,
+    const QList<Obstacle *> &obstacles)
+{
+    for(Obstacle *obstacle : obstacles)
+    {
+        StaticObstacle *hazard =
+            dynamic_cast<StaticObstacle *>(obstacle);
+
+        if(hazard && hazard->isHazard())
+        {
+            if(player->getBounds().intersects(
+                    hazard->getBounds()))
+            {
+                player->takeDamage(25);
+            }
+        }
+    }
+}
