@@ -23,6 +23,7 @@ enum class GameState {
     START_SCREEN,
     PLAYING,
     PAUSED,
+    DYING,
     LEVEL_COMPLETE,
     GAME_OVER,
     VICTORY
@@ -68,6 +69,8 @@ private:
     void spawnEnemies();
     void clearEnemies();
     void levelComplete();
+    void updateDeathAnimation();
+    void finishDeath();
     QSet<int> keysPressed;
     GameState state;
     MessageScreen *message;
@@ -78,6 +81,8 @@ private:
     Player *player;
     Level *level = nullptr;
     QList<Goomba *> enemies;
+    double deathVelocity = 0;   // Mario's vertical speed during the death animation
+    int deathFrames = 0;        // frames since the death animation started
 };
 
 #endif // GAME_H
