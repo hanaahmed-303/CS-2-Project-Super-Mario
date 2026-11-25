@@ -75,9 +75,14 @@ bool Level::loadFromFile(const QString &path, QString *error)
             case 'Q':
                 obstacle = new QuestionBlock(x, y);
                 break;
-            case 'P':
-                obstacle = new Pipe(x, y);
+            case 'P': {
+                // Look at the neighbouring tiles to know which piece of the pipe this is
+                const bool pipeAbove = row > 0 && column < rows[row - 1].size()
+                                       && rows[row - 1][column] == 'P';
+                const bool pipeLeft  = column > 0 && rows[row][column - 1] == 'P';
+                obstacle = new Pipe(x, y, !pipeAbove, !pipeLeft);
                 break;
+            }
             case 'S':
                 obstacle = new Spike(x, y);
                 break;
