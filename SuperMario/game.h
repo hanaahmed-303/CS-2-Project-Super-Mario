@@ -18,6 +18,7 @@
 #include "collectible.h"
 #include "flag.h"
 #include "soundmanager.h"
+#include "scorepopup.h"
 
 enum class GameState {
     START_SCREEN,
@@ -69,6 +70,7 @@ private:
     void spawnEnemies();
     void clearEnemies();
     void levelComplete();
+    void addPoints(int points, const QPointF &where);
     void updateDeathAnimation();
     void finishDeath();
     QSet<int> keysPressed;
