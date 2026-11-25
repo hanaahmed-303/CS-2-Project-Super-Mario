@@ -8,12 +8,19 @@ Player::Player(double x, double y, const QString &imagePath)
     spawnY = y;
 
     // Load every animation picture once
-    standFrame = QPixmap(imagePath);
-    jumpFrame  = QPixmap(":/images/mario_jump.png");
-    deadFrame  = QPixmap(":/images/mario_dead.png");
-    walkFrames = { QPixmap(":/images/mario_walk1.png"),
-                   QPixmap(":/images/mario_walk2.png"),
-                   QPixmap(":/images/mario_walk3.png") };
+    smallFrames.stand = QPixmap(imagePath);
+    smallFrames.jump  = QPixmap(":/images/mario_jump.png");
+    smallFrames.walk  = { QPixmap(":/images/mario_walk1.png"),
+                          QPixmap(":/images/mario_walk2.png"),
+                          QPixmap(":/images/mario_walk3.png") };
+
+    bigFrames.stand = QPixmap(":/images/mario_big.png");
+    bigFrames.jump  = QPixmap(":/images/mario_big_jump.png");
+    bigFrames.walk  = { QPixmap(":/images/mario_big_walk1.png"),
+                        QPixmap(":/images/mario_big_walk2.png"),
+                        QPixmap(":/images/mario_big_walk3.png") };
+
+    deadFrame = QPixmap(":/images/mario_dead.png");
 }
 
 void Player::update()
@@ -42,20 +49,20 @@ void Player::updateAnimation()
 
     // In the air -> jump picture
     if (!onGround) {
-        showFrame(jumpFrame);
+        showFrame(frames().jump);
         return;
     }
 
     // Moving on the ground -> cycle the walking pictures
     if (velocityX != 0) {
         animationCounter++;
-        int index = (animationCounter / 6) % walkFrames.size();
-        showFrame(walkFrames[index]);
+        int index = (animationCounter / 6) % frames().walk.size();
+        showFrame(frames().walk[index]);
     }
     // Standing still
     else {
         animationCounter = 0;
-        showFrame(standFrame);
+        showFrame(frames().stand);
     }
 }
 
@@ -129,10 +136,11 @@ void Player::respawn()
     onGround = false;
     damageCooldown = 60;
 
+    shape = PlayerShape::SMALL;     // a new life starts small
     facingRight = true;
     animationCounter = 0;
     setOpacity(1.0);
-    showFrame(standFrame);
+    showFrame(frames().stand);
 }
 
 void Player::setSpawnPoint(double x, double y)
@@ -143,13 +151,51 @@ void Player::setSpawnPoint(double x, double y)
 
 void Player::takeDamage(int damage)
 {
-    if (damageCooldown == 0 && damage > 0 && !isDead()) {
-        Character::takeDamage(damage);
-        damageCooldown = 60;
+    if (damageCooldown > 0 || damage <= 0 || isDead())
+        return;
+
+    if (shape == PlayerShape::BIG) {
+        shrink();                       // the mushroom protects him once
+        return;
     }
+
+    Character::takeDamage(damage);
+    damageCooldown = 60;
 }
 
 void Player::addLife()
 {
     lives++;
+}
+
+const Player::Frames &Player::frames() const
+{
+    return shape == PlayerShape::BIG ? bigFrames : smallFrames;
+}
+
+PlayerShape Player::getShape() const
+{
+    return shape;
+}
+
+bool Player::grow()
+{
+    if (shape == PlayerShape::BIG)
+        return false;
+
+    shape = PlayerShape::BIG;
+    setY(y() - smallFrames.stand.height());    // grow upwards: feet stay on the ground
+    showFrame(frames().stand);
+    return true;
+}
+
+void Player::shrink()
+{
+    if (shape == PlayerShape::SMALL)
+        return;
+
+    shape = PlayerShape::SMALL;
+    setY(y() + smallFrames.stand.height());    // shrink downwards: feet stay on the ground
+    showFrame(frames().stand);
+    damageCooldown = 120;                       // 2 seconds of blinking invincibility
 }
