@@ -12,6 +12,8 @@ SoundManager::SoundManager(QObject *parent)
     addEffect("gameover", "qrc:/sounds/gameover.wav");
     addEffect("flagpole", "qrc:/sounds/flagpole.wav");
     addEffect("bump",     "qrc:/sounds/bump.wav");
+    addEffect("1up",      "qrc:/sounds/1up.wav");
+    addEffect("hurryup",  "qrc:/sounds/hurryup.wav");
 
     // Background music (MP3), repeats forever
     audioOutput = new QAudioOutput(this);
