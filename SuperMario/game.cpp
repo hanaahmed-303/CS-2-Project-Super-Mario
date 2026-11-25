@@ -82,8 +82,10 @@ void Game::gameLoop()
         goomba->update();
         CollisionManager::resolveObstacles(goomba, goombaPrevious, level->getObstacles());
 
-        if (CollisionManager::checkEnemyCollision(player, goomba, previousBounds))
-            hud->getScore()->increase(100);    // stomped!
+        if (CollisionManager::checkEnemyCollision(player, goomba, previousBounds)) {
+            hud->getScore()->increase(100);
+            sound->play("stomp");
+        }
     }
 
     // Coins: touching one adds its points to the score
@@ -91,8 +93,10 @@ void Game::gameLoop()
         if (item->isCollected())
             continue;
 
-        if (player->getBounds().intersects(item->getBounds()))
+        if (player->getBounds().intersects(item->getBounds())) {
             hud->getScore()->increase(item->collect());
+            sound->play("coin");
+        }
     }
 
     // 4. Invisible walls: screen's left edge, and the end of the level
@@ -143,9 +147,10 @@ void Game::handleInput()
     else
         player->stopMoving();
 
-    // Jump
-    if (jump)
+    if (jump && player->isOnGround()) {
         player->jump();
+        sound->play("jump");
+    }
 }
 
 void Game::mousePressEvent(QMouseEvent *event)
