@@ -76,6 +76,8 @@ void Game::gameLoop()
     if (state != GameState::PLAYING)
         return;
 
+    PlayerShape shapeBefore = player->getShape();
+
     // 1. Moving platforms move first (so they can carry Mario this frame)
     level->updateAll();
 
@@ -164,17 +166,34 @@ void Game::gameLoop()
         }
     }
 
-    // Coins: touching one adds its points to the score
+    // Collectibles: coins and power-ups
     for (Collectible *item : level->getCollectibles()) {
-        if (item->isCollected())
+        if (item->isCollected() || !item->isVisible())
             continue;
+
+        // Power-ups move by themselves (rise out of the block, then slide)
+        PowerUp *powerUp = dynamic_cast<PowerUp *>(item);
+        if (powerUp) {
+            powerUp->move(level->getObstacles(), level->getBounds().bottom());
+            if (powerUp->isEmerging())
+                continue;                   // can't be taken while coming out
+        }
 
         if (player->getBounds().intersects(item->getBounds())) {
             addPoints(item->collect(), item->scenePos());
-            sound->play("coin");
-            collectCoin();
+            if (powerUp) {
+                powerUp->applyTo(player);   // e.g. Mushroom -> Big Mario
+                sound->play("powerup");
+            } else {
+                sound->play("coin");
+                collectCoin();
+            }
         }
     }
+
+    // Big Mario was hit and shrank this frame
+    if (shapeBefore == PlayerShape::BIG && player->getShape() == PlayerShape::SMALL)
+        sound->play("powerdown");
 
     // Flag: touching it finishes the level
     Flag *flag = level->getFlag();
@@ -444,9 +463,16 @@ void Game::hitBlockAbove()
 
         QuestionBlock *block = dynamic_cast<QuestionBlock *>(obstacle);
         if (block && block->hit()) {
-            sound->play("coin");
-            addPoints(200, block->scenePos() + QPointF(4, -28));
-            collectCoin();
+            if (block->getContent() == QuestionBlock::Content::Mushroom) {
+                // A Super Mushroom rises out of the block (block bounced up 8 px)
+                Mushroom *mushroom = new Mushroom(block->x(), block->y() + 8);
+                level->addCollectible(mushroom);
+                sound->play("powerup_appears");
+            } else {
+                sound->play("coin");
+                addPoints(200, block->scenePos() + QPointF(4, -28));
+                collectCoin();
+            }
         } else {
             sound->play("bump");
         }

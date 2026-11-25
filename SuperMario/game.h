@@ -20,6 +20,7 @@
 #include "soundmanager.h"
 #include "scorepopup.h"
 #include "leveltimer.h"
+#include "powerup.h"
 
 enum class GameState {
     START_SCREEN,
