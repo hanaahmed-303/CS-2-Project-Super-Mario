@@ -42,11 +42,3 @@ void Goomba::stomp()
     setOffset(0, 16);                                // flat picture is half as tall
     QTimer::singleShot(400, this, [this]() { hide(); });
 }
-
-void Goomba::vanish()
-{
-    takeDamage(health);
-    velocityX = 0;
-    velocityY = 0;
-    hide();
-}

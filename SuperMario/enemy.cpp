@@ -34,3 +34,17 @@ int Enemy::getContactDamage() const
 {
     return contactDamage;
 }
+
+void Enemy::vanish()
+{
+    takeDamage(health);
+    velocityX = 0;
+    velocityY = 0;
+    hide();
+}
+
+bool Enemy::touchedFromSide(const Character *mario)
+{
+    Q_UNUSED(mario);
+    return false;       // by default, touching an enemy from the side hurts Mario
+}

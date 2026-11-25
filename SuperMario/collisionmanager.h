@@ -4,7 +4,7 @@
 #include "character.h"
 #include "obstacle.h"
 #include "player.h"
-#include "goomba.h"
+#include "enemy.h"
 #include <QList>
 
 class CollisionManager
@@ -21,7 +21,7 @@ public:
 
     static bool checkEnemyCollision(
         Player *player,
-        Goomba *enemy,
+        Enemy *enemy,
         const QRectF &previousBounds);
 };
 
