@@ -42,6 +42,7 @@ public:
     int getLives() const;
     void loseLife();
     void resetLives();
+    void addLife();
     void respawn();
     void setSpawnPoint(double x, double y);
 

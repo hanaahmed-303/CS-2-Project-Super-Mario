@@ -16,6 +16,14 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     // Sound: music + effects
     sound = new SoundManager(this);
 
+    // TIME countdown: hurry-up sound at 100, Mario dies at 0
+    timer = new LevelTimer(this);
+    connect(timer, &LevelTimer::hurryUp, this, [this]() { sound->play("hurryup"); });
+    connect(timer, &LevelTimer::timeUp, this, [this]() {
+        if (state == GameState::PLAYING)
+            handlePlayerDeath();
+    });
+
     setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     setFrameStyle(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -164,6 +172,7 @@ void Game::gameLoop()
         if (player->getBounds().intersects(item->getBounds())) {
             addPoints(item->collect(), item->scenePos());
             sound->play("coin");
+            collectCoin();
         }
     }
 
@@ -192,7 +201,8 @@ void Game::gameLoop()
     // 6. Camera + HUD
     updateCamera();
     hud->refresh(player->getHealth(), player->getMaxHealth(),
-                 player->getLives(), levelNumber);
+                 player->getLives(), levelNumber,
+                 coins, timer->timeLeft());
 }
 void Game::keyPressEvent(QKeyEvent *event)
 {
@@ -245,6 +255,7 @@ void Game::mousePressEvent(QMouseEvent *event)
 
 void Game::startGame()
 {
+    timer->resume();            // TIME starts counting
     message->hideMessage();
     state = GameState::PLAYING;
     setFocus();
@@ -259,6 +270,7 @@ void Game::updateCamera()
 
 void Game::handlePlayerDeath()
 {
+    timer->pause();
     state = GameState::DYING;   // freeze the level, only Mario moves
     keysPressed.clear();
 
@@ -312,13 +324,15 @@ void Game::gameOver()
 
     // Show the final numbers (the loop is frozen, so refresh once here)
     hud->refresh(player->getHealth(), player->getMaxHealth(),
-                 player->getLives(), levelNumber);
+                 player->getLives(), levelNumber,
+                 coins, timer->timeLeft());
 
     message->showMessage("GAME OVER\nClick to restart");
 }
 
 void Game::resetGame()
 {
+    coins = 0;
     levelNumber = 1;
     hud->getScore()->reset();   // the ONLY place the score is reset
     player->resetLives();
@@ -347,6 +361,7 @@ bool Game::loadLevel(int n)
     camera->reset();
 
     spawnEnemies();
+    timer->reset(400);          // every level (and every retry) starts with TIME 400
     return true;                                       // ← new
 }
 
@@ -368,12 +383,14 @@ void Game::clearEnemies()
 
 void Game::levelComplete()
 {
+    timer->pause();
     sound->stopMusic();
     sound->play("flagpole");
     state = GameState::LEVEL_COMPLETE;     // freeze the game
     addPoints(500, player->pos() + QPointF(0, -24));   // bonus for finishing the level
     hud->refresh(player->getHealth(), player->getMaxHealth(),
-                 player->getLives(), levelNumber);
+                 player->getLives(), levelNumber,
+                 coins, timer->timeLeft());
 
     message->showMessage("LEVEL " + QString::number(levelNumber) + " COMPLETE!");
 
@@ -429,6 +446,7 @@ void Game::hitBlockAbove()
         if (block && block->hit()) {
             sound->play("coin");
             addPoints(200, block->scenePos() + QPointF(4, -28));
+            collectCoin();
         } else {
             sound->play("bump");
         }
@@ -436,4 +454,16 @@ void Game::hitBlockAbove()
     }
 
     sound->play("bump");    // hit the edge of a block
+}
+
+void Game::collectCoin()
+{
+    coins++;
+
+    // Like the original: every 100 coins gives an extra life
+    if (coins >= 100) {
+        coins = 0;
+        player->addLife();
+        sound->play("1up");
+    }
 }

@@ -148,3 +148,8 @@ void Player::takeDamage(int damage)
         damageCooldown = 60;
     }
 }
+
+void Player::addLife()
+{
+    lives++;
+}
