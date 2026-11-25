@@ -9,6 +9,9 @@ Goomba::Goomba(double x, double y, const QString &imagePath)
     maxHealth = 20;
     contactDamage = 20;
 
+    // Like the original game: walk until hitting something, no fixed patrol area
+    setPatrolRange(-1e9, 1e9);
+
     walkFrame1 = QPixmap(imagePath);
     walkFrame2 = QPixmap(":/images/goomba_walk2.png");
     flatFrame  = QPixmap(":/images/goomba_flat.png");
@@ -38,4 +41,12 @@ void Goomba::stomp()
     setPixmap(flatFrame);
     setOffset(0, 16);                                // flat picture is half as tall
     QTimer::singleShot(400, this, [this]() { hide(); });
+}
+
+void Goomba::vanish()
+{
+    takeDamage(health);
+    velocityX = 0;
+    velocityY = 0;
+    hide();
 }
