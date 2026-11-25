@@ -81,9 +81,16 @@ void Game::gameLoop()
     CollisionManager::checkHazards(player, level->getObstacles());
 
     // Enemies: move, collide with blocks, then check against Mario
+    // Like the original game, a Goomba only starts walking once it
+    // comes onto the screen (so it doesn't wander off before Mario arrives)
+    double screenRight = camera->getLeft() + WINDOW_WIDTH;
+
     for (Goomba *goomba : std::as_const(enemies)) {
         if (goomba->isDead())
             continue;
+
+        if (goomba->x() > screenRight + 32)
+            continue;                       // still waiting off-screen
 
         QRectF goombaPrevious = goomba->getBounds();
         goomba->update();
@@ -94,6 +101,23 @@ void Game::gameLoop()
         // Walked into a block or pipe (collision stopped it) -> turn around
         if (speedBefore != 0 && goomba->getVelocityX() == 0)
             goomba->reverseDirection();
+
+        // Spikes are walls for Goombas too (CollisionManager only hurts Mario with them)
+        for (Obstacle *obstacle : level->getObstacles()) {
+            StaticObstacle *spike = dynamic_cast<StaticObstacle *>(obstacle);
+            if (spike && spike->isHazard() &&
+                goomba->getBounds().intersects(spike->getBounds())) {
+                goomba->setX(goomba->x() - (goomba->getBounds().left() - goombaPrevious.left()));
+                goomba->reverseDirection();
+                break;
+            }
+        }
+
+        // Start of the level is a wall
+        if (goomba->x() < 0) {
+            goomba->setX(0);
+            goomba->reverseDirection();
+        }
 
         // Fell into a pit -> gone
         if (goomba->y() > level->getBounds().bottom()) {
