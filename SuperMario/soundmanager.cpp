@@ -13,6 +13,7 @@ SoundManager::SoundManager(QObject *parent)
     addEffect("gameover", "qrc:/sounds/gameover.wav");
     addEffect("flagpole", "qrc:/sounds/flagpole.wav");
     addEffect("bump",     "qrc:/sounds/bump.wav");
+    addEffect("pause",    "qrc:/sounds/pause.wav");
     addEffect("break",    "qrc:/sounds/brick.wav");
     addEffect("beep",     "qrc:/sounds/beep.wav");
     addEffect("powerup_appears", "qrc:/sounds/powerup_appears.wav");
@@ -53,4 +54,14 @@ void SoundManager::playMusic()
 void SoundManager::stopMusic()
 {
     music->stop();
+}
+
+void SoundManager::pauseMusic()
+{
+    music->pause();     // unlike stop(), remembers where the song was
+}
+
+void SoundManager::resumeMusic()
+{
+    music->play();      // continues from where it was paused
 }
