@@ -17,6 +17,7 @@ public:
 
     void update() override;
     void stomp();
+    void vanish();      // removed without the squash (fell into a pit)
 };
 
 #endif
