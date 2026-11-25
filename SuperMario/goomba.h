@@ -16,8 +16,7 @@ public:
     Goomba(double x, double y, const QString &imagePath);
 
     void update() override;
-    void stomp();
-    void vanish();      // removed without the squash (fell into a pit)
+    void stomp() override;
 };
 
 #endif

@@ -27,6 +27,7 @@ public:
     QRectF getBounds() const { return bounds; }
     QPointF getPlayerSpawn() const { return playerSpawn; }
     const QList<QPointF> &getEnemySpawns() const { return enemySpawns; }
+    const QList<QPointF> &getKoopaSpawns() const { return koopaSpawns; }
     const QList<Obstacle *> &getObstacles() const;
     const QList<Collectible *> &getCollectibles() const;
     void addCollectible(Collectible *item);    // e.g. a mushroom coming out of a ? block
@@ -39,6 +40,7 @@ private:
     QRectF bounds;
     QPointF playerSpawn;
     QList<QPointF> enemySpawns;
+    QList<QPointF> koopaSpawns;
     QList<Obstacle *> obstacles;
     QList<Collectible *> collectibles;
     Flag *flag = nullptr;

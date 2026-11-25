@@ -111,66 +111,92 @@ void Game::gameLoop()
     CollisionManager::checkHazards(player, level->getObstacles());
 
     // Enemies: move, collide with blocks, then check against Mario
-    // Like the original game, a Goomba only starts walking once it
+    // Like the original game, an enemy only starts walking once it
     // comes onto the screen (so it doesn't wander off before Mario arrives)
     double screenRight = camera->getLeft() + WINDOW_WIDTH;
 
-    for (Goomba *goomba : std::as_const(enemies)) {
-        if (goomba->isDead())
+    for (Enemy *enemy : std::as_const(enemies)) {
+        if (enemy->isDead())
             continue;
 
-        if (goomba->x() > screenRight + 32)
+        if (enemy->x() > screenRight + 32)
             continue;                       // still waiting off-screen
 
-        QRectF goombaPrevious = goomba->getBounds();
-        goomba->update();
+        QRectF enemyPrevious = enemy->getBounds();
+        enemy->update();
 
-        double speedBefore = goomba->getVelocityX();
-        CollisionManager::resolveObstacles(goomba, goombaPrevious, level->getObstacles());
+        double speedBefore = enemy->getVelocityX();
+        CollisionManager::resolveObstacles(enemy, enemyPrevious, level->getObstacles());
 
         // Walked into a block or pipe (collision stopped it) -> turn around
-        if (speedBefore != 0 && goomba->getVelocityX() == 0)
-            goomba->reverseDirection();
+        // (a sliding Koopa shell bounces off walls the same way)
+        if (speedBefore != 0 && enemy->getVelocityX() == 0)
+            enemy->reverseDirection();
 
-        // Spikes are walls for Goombas too (CollisionManager only hurts Mario with them)
+        // Spikes are walls for enemies too (CollisionManager only hurts Mario with them)
         for (Obstacle *obstacle : level->getObstacles()) {
             StaticObstacle *spike = dynamic_cast<StaticObstacle *>(obstacle);
             if (spike && spike->isHazard() &&
-                goomba->getBounds().intersects(spike->getBounds())) {
-                goomba->setX(goomba->x() - (goomba->getBounds().left() - goombaPrevious.left()));
-                goomba->reverseDirection();
+                enemy->getBounds().intersects(spike->getBounds())) {
+                enemy->setX(enemy->x() - (enemy->getBounds().left() - enemyPrevious.left()));
+                enemy->reverseDirection();
                 break;
             }
         }
 
         // Start of the level is a wall
-        if (goomba->x() < 0) {
-            goomba->setX(0);
-            goomba->reverseDirection();
+        if (enemy->x() < 0) {
+            enemy->setX(0);
+            enemy->reverseDirection();
         }
 
         // Fell into a pit -> gone
-        if (goomba->y() > level->getBounds().bottom()) {
-            goomba->vanish();
+        if (enemy->y() > level->getBounds().bottom()) {
+            enemy->vanish();
             continue;
         }
 
-        if (CollisionManager::checkEnemyCollision(player, goomba, previousBounds)) {
-            addPoints(100, goomba->pos() + QPointF(0, -16));
-            sound->play("stomp");
+        // Koopa: was it a still shell before Mario touched it? (then touching = kick)
+        Koopa *koopa = dynamic_cast<Koopa *>(enemy);
+        bool wasSliding = koopa && koopa->isSlidingShell();
+
+        if (CollisionManager::checkEnemyCollision(player, enemy, previousBounds)) {
+            addPoints(100, enemy->pos() + QPointF(0, -16));
+            sound->play(koopa ? "kick" : "stomp");
+        } else if (koopa && !wasSliding && koopa->isSlidingShell()) {
+            // Mario kicked a still shell from the side
+            addPoints(400, enemy->pos() + QPointF(0, -16));
+            sound->play("kick");
         }
     }
 
-    // Two Goombas walking into each other both turn around
+    // Enemies touching each other
     for (int i = 0; i < enemies.size(); ++i) {
         for (int j = i + 1; j < enemies.size(); ++j) {
-            Goomba *a = enemies[i];
-            Goomba *b = enemies[j];
+            Enemy *a = enemies[i];
+            Enemy *b = enemies[j];
             if (a->isDead() || b->isDead())
                 continue;
             if (!a->getBounds().intersects(b->getBounds()))
                 continue;
 
+            // A sliding Koopa shell knocks out whatever it hits
+            Koopa *shellA = dynamic_cast<Koopa *>(a);
+            Koopa *shellB = dynamic_cast<Koopa *>(b);
+            bool aSliding = shellA && shellA->isSlidingShell();
+            bool bSliding = shellB && shellB->isSlidingShell();
+
+            if (aSliding || bSliding) {
+                Enemy *victim = aSliding ? b : a;
+                if (aSliding && bSliding)
+                    victim = b;             // two shells: just knock one out
+                addPoints(500, victim->pos() + QPointF(0, -16));
+                sound->play("kick");
+                victim->vanish();
+                continue;
+            }
+
+            // Otherwise two enemies walking into each other both turn around
             bool aIsLeft = a->x() < b->x();
             bool approaching = (aIsLeft && a->getVelocityX() > 0) ||
                                (!aIsLeft && a->getVelocityX() < 0);
@@ -407,11 +433,18 @@ void Game::spawnEnemies()
         scene->addItem(goomba);
         enemies.append(goomba);
     }
+
+    for (const QPointF &pos : level->getKoopaSpawns()) {
+        Koopa *koopa = new Koopa(pos.x(), pos.y());
+        koopa->setZValue(5);
+        scene->addItem(koopa);
+        enemies.append(koopa);
+    }
 }
 
 void Game::clearEnemies()
 {
-    qDeleteAll(enemies);   // delete every Goomba (also removes it from the scene)
+    qDeleteAll(enemies);   // delete every enemy (also removes it from the scene)
     enemies.clear();       // empty the list
 }
 

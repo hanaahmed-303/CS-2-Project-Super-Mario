@@ -52,6 +52,7 @@ bool Level::loadFromFile(const QString &path, QString *error)
     QList<Obstacle *> newObstacles;
     QList<Collectible *> newCollectibles;
     QList<QPointF> newEnemySpawns;
+    QList<QPointF> newKoopaSpawns;
     QList<SceneryItem> scenery;
     double newCastleDoorX = -1;
     Flag *newFlag = nullptr;
@@ -127,6 +128,9 @@ bool Level::loadFromFile(const QString &path, QString *error)
             case 'G':
                 newEnemySpawns.append(QPointF(x, y));
                 break;
+            case 'T':   // Koopa Troopa
+                newKoopaSpawns.append(QPointF(x, y));
+                break;
             case 'A':
                 if (hasSpawn)
                     return fail(QStringLiteral("The map has more than one player spawn (A)."));
@@ -164,6 +168,7 @@ bool Level::loadFromFile(const QString &path, QString *error)
     scene->setSceneRect(bounds);
     playerSpawn = newSpawn;
     enemySpawns = std::move(newEnemySpawns);
+    koopaSpawns = std::move(newKoopaSpawns);
     obstacles = std::move(newObstacles);
     collectibles = std::move(newCollectibles);
     flag = newFlag;

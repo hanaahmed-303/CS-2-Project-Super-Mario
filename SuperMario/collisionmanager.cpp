@@ -117,7 +117,7 @@ void CollisionManager::checkHazards(
 
 bool CollisionManager::checkEnemyCollision(
     Player *player,
-    Goomba *enemy,
+    Enemy *enemy,
     const QRectF &previousBounds)
 {
     if(player->isDead() || enemy->isDead())
@@ -142,6 +142,11 @@ bool CollisionManager::checkEnemyCollision(
 
         return true;
     }
+
+    // Some enemies react to a side touch without hurting Mario
+    // (e.g. a Koopa shell that is standing still gets kicked)
+    if(enemy->touchedFromSide(player))
+        return false;
 
     player->takeDamage(enemy->getContactDamage());
 

@@ -8,6 +8,7 @@ SoundManager::SoundManager(QObject *parent)
     addEffect("jump",     "qrc:/sounds/jump.wav");
     addEffect("coin",     "qrc:/sounds/coin.wav");
     addEffect("stomp",    "qrc:/sounds/stomp.wav");
+    addEffect("kick",     "qrc:/sounds/kick.wav");
     addEffect("death",    "qrc:/sounds/death.wav");
     addEffect("gameover", "qrc:/sounds/gameover.wav");
     addEffect("flagpole", "qrc:/sounds/flagpole.wav");
