@@ -57,7 +57,7 @@ void Player::updateAnimation()
 
     // Moving on the ground -> cycle the walking pictures
     if (velocityX != 0) {
-        animationCounter++;
+        animationCounter += running ? 2 : 1;     // legs move twice as fast when running
         int index = (animationCounter / 6) % frames().walk.size();
         showFrame(frames().walk[index]);
     }
@@ -102,6 +102,12 @@ void Player::moveRight()
 void Player::stopMoving()
 {
     velocityX = 0;
+}
+
+void Player::setRunning(bool run)
+{
+    running = run;
+    speed = running ? RUN_SPEED : WALK_SPEED;
 }
 
 void Player::jump()

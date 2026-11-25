@@ -13,6 +13,9 @@ class Player : public Character
 {
 private:
     double speed = 4.0;
+    bool running = false;
+    static constexpr double WALK_SPEED = 4.0;
+    static constexpr double RUN_SPEED  = 6.5;
     double jumpStrength = 12.0;
 
     static const int MAX_LIVES = 3;
@@ -49,6 +52,7 @@ public:
     void moveLeft();
     void moveRight();
     void stopMoving();
+    void setRunning(bool run);      // holding Shift: faster, legs move faster
     void jump();
     void setOnGround(bool grounded) override;
 
