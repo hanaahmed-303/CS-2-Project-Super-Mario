@@ -87,6 +87,7 @@ private:
     void updateTimeBonus();
     void addPoints(int points, const QPointF &where);
     void hitBlockAbove();
+    void togglePause();
     void breakBrick(Brick *brick);
     void collectCoin();
     void updateDeathAnimation();

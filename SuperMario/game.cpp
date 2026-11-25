@@ -277,7 +277,33 @@ void Game::keyPressEvent(QKeyEvent *event)
 {
     if (event->isAutoRepeat())
         return;
+
+    // P pauses / continues (only while playing)
+    if (event->key() == Qt::Key_P) {
+        togglePause();
+        return;
+    }
+
     keysPressed.insert(event->key());
+}
+
+void Game::togglePause()
+{
+    if (state == GameState::PLAYING) {
+        state = GameState::PAUSED;      // the game loop stops updating everything
+        keysPressed.clear();            // don't keep walking when we come back
+        timer->pause();                 // TIME stops
+        sound->pauseMusic();
+        sound->play("pause");
+        message->showMessage("PAUSED\nPress P to continue");
+    }
+    else if (state == GameState::PAUSED) {
+        state = GameState::PLAYING;
+        message->hideMessage();
+        timer->resume();
+        sound->play("pause");
+        sound->resumeMusic();
+    }
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
@@ -293,6 +319,9 @@ void Game::handleInput()
     bool right = keysPressed.contains(Qt::Key_Right) || keysPressed.contains(Qt::Key_D);
     bool jump  = keysPressed.contains(Qt::Key_Space) || keysPressed.contains(Qt::Key_Up)
                 || keysPressed.contains(Qt::Key_W);
+    // Shift = run (faster), like holding B in the original
+    player->setRunning(keysPressed.contains(Qt::Key_Shift));
+
     // Horizontal movement
     if (left)
         player->moveLeft();
