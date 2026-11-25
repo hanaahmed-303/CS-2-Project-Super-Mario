@@ -52,6 +52,7 @@ bool Level::loadFromFile(const QString &path, QString *error)
     QList<Obstacle *> newObstacles;
     QList<Collectible *> newCollectibles;
     QList<QPointF> newEnemySpawns;
+    QList<SceneryItem> scenery;
     Flag *newFlag = nullptr;
     QPointF newSpawn;
     bool hasSpawn = false;
@@ -71,6 +72,29 @@ bool Level::loadFromFile(const QString &path, QString *error)
                 break;
             case 'B':
                 obstacle = new Brick(x, y);
+                break;
+            case 'H':
+                obstacle = new HardBlock(x, y);
+                break;
+            // Scenery (no collision): painted into the background,
+            // bottom-left corner of the picture at the bottom-left of this tile
+            case 'c':
+                scenery.append({QStringLiteral(":/images/cloud.png"), QPointF(x, y + TILE_SIZE)});
+                break;
+            case 'b':
+                scenery.append({QStringLiteral(":/images/bush_big.png"), QPointF(x, y + TILE_SIZE)});
+                break;
+            case 'u':
+                scenery.append({QStringLiteral(":/images/bush_small.png"), QPointF(x, y + TILE_SIZE)});
+                break;
+            case 'm':
+                scenery.append({QStringLiteral(":/images/hill_big.png"), QPointF(x, y + TILE_SIZE)});
+                break;
+            case 'n':
+                scenery.append({QStringLiteral(":/images/hill_small.png"), QPointF(x, y + TILE_SIZE)});
+                break;
+            case 'k':
+                scenery.append({QStringLiteral(":/images/castle.png"), QPointF(x, y + TILE_SIZE)});
                 break;
             case 'Q':
                 obstacle = new QuestionBlock(x, y);
@@ -126,7 +150,7 @@ bool Level::loadFromFile(const QString &path, QString *error)
         return fail(QStringLiteral("The map needs one player spawn (A) and one flag (F)."));
 
     const QSize size(columns * TILE_SIZE, rows.size() * TILE_SIZE);
-    new Background(size, newRoot.get());
+    new Background(size, scenery, newRoot.get());
 
     delete root.data();
     root = newRoot.release();

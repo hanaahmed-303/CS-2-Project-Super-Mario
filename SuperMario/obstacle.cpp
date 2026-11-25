@@ -48,6 +48,11 @@ bool QuestionBlock::hit()
     return true;
 }
 
+HardBlock::HardBlock(double x, double y)
+    : StaticObstacle(x, y, QStringLiteral(":/images/hard_block.png"))
+{
+}
+
 Spike::Spike(double x, double y)
     : StaticObstacle(x, y, QStringLiteral(":/images/spike.png"))
 {
