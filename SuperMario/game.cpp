@@ -99,6 +99,13 @@ void Game::gameLoop()
         }
     }
 
+    // Flag: touching it finishes the level
+    Flag *flag = level->getFlag();
+    if (flag && player->getBounds().intersects(flag->getBounds()) && flag->activate()) {
+        levelComplete();
+        return;
+    }
+
     // 4. Invisible walls: screen's left edge, and the end of the level
     if (player->x() < camera->getLeft())
         player->setX(camera->getLeft());
@@ -266,6 +273,8 @@ void Game::clearEnemies()
 
 void Game::levelComplete()
 {
+    sound->stopMusic();
+    sound->play("flagpole");
     state = GameState::LEVEL_COMPLETE;     // freeze the game
     hud->getScore()->increase(500);        // bonus for finishing the level
     hud->refresh(player->getHealth(), player->getMaxHealth(),
@@ -293,6 +302,7 @@ void Game::nextLevel()
 
 void Game::winGame()
 {
+    sound->stopMusic();
     state = GameState::VICTORY;
     message->showMessage("CONGRATULATIONS!\nYou finished the game\nScore: "
                          + QString::number(hud->getScore()->getScore())
