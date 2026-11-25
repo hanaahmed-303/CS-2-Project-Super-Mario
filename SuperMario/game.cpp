@@ -187,10 +187,13 @@ void Game::handlePlayerDeath()
     player->loseLife();
 
     if (player->getLives() == 0) {
+        sound->stopMusic();
+        sound->play("gameover");
         gameOver();
         return;
     }
 
+    sound->play("death");
     restartLevel();
 }
 void Game::restartLevel()
