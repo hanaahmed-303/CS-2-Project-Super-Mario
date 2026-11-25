@@ -22,6 +22,7 @@ SOURCES += \
     goomba.cpp \
     healthbar.cpp \
     hud.cpp \
+    koopa.cpp \
     main.cpp \
     messagescreen.cpp \
     player.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     goomba.h \
     healthbar.h \
     hud.h \
+    koopa.h \
     messagescreen.h \
     player.h \
     powerup.h \
