@@ -29,8 +29,9 @@ Pipe::Pipe(double x, double y, bool isTop, bool isLeft)
 {
 }
 
-QuestionBlock::QuestionBlock(double x, double y)
-    : StaticObstacle(x, y, QStringLiteral(":/images/question.png"))
+QuestionBlock::QuestionBlock(double x, double y, Content content)
+    : StaticObstacle(x, y, QStringLiteral(":/images/question.png")),
+      content(content)
 {
 }
 

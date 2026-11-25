@@ -99,6 +99,9 @@ bool Level::loadFromFile(const QString &path, QString *error)
             case 'Q':
                 obstacle = new QuestionBlock(x, y);
                 break;
+            case 'U':   // ? block with a Super Mushroom inside
+                obstacle = new QuestionBlock(x, y, QuestionBlock::Content::Mushroom);
+                break;
             case 'P': {
                 // Look at the neighbouring tiles to know which piece of the pipe this is
                 const bool pipeAbove = row > 0 && column < rows[row - 1].size()
@@ -183,4 +186,12 @@ void Level::updateAll()
 {
     for (Obstacle *obstacle : getObstacles())
         obstacle->update();
+}
+
+void Level::addCollectible(Collectible *item)
+{
+    if (!root)
+        return;
+    item->setParentItem(root.data());   // belongs to the level (deleted with it)
+    collectibles.append(item);
 }

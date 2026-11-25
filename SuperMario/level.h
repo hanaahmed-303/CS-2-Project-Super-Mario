@@ -29,6 +29,7 @@ public:
     const QList<QPointF> &getEnemySpawns() const { return enemySpawns; }
     const QList<Obstacle *> &getObstacles() const;
     const QList<Collectible *> &getCollectibles() const;
+    void addCollectible(Collectible *item);    // e.g. a mushroom coming out of a ? block
     Flag *getFlag() const { return root ? flag : nullptr; }
 
 private:

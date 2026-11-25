@@ -49,13 +49,17 @@ public:
 class QuestionBlock : public StaticObstacle
 {
 public:
-    QuestionBlock(double x, double y);
+    enum class Content { Coin, Mushroom };      // what comes out when hit
+
+    QuestionBlock(double x, double y, Content content = Content::Coin);
     bool isHazard() const override { return false; }
     bool isUsed() const { return used; }
-    bool hit();          // true only the first time (it gives a coin once)
+    Content getContent() const { return content; }
+    bool hit();          // true only the first time (it gives its content once)
 
 private:
     bool used = false;
+    Content content;
 };
 
 class HardBlock : public StaticObstacle
