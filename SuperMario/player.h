@@ -2,6 +2,8 @@
 #define PLAYER_H
 
 #include "character.h"
+#include <QPixmap>
+#include <QList>
 
 class Player : public Character
 {
@@ -16,6 +18,17 @@ private:
 
     int damageCooldown = 0;
 
+    // ---- Animation ----
+    QPixmap standFrame;
+    QPixmap jumpFrame;
+    QPixmap deadFrame;
+    QList<QPixmap> walkFrames;
+    bool facingRight = true;
+    int animationCounter = 0;
+
+    void updateAnimation();
+    void showFrame(const QPixmap &frame);
+
 public:
     Player(double x, double y, const QString &imagePath);
 
@@ -24,7 +37,7 @@ public:
     void moveRight();
     void stopMoving();
     void jump();
-    void setOnGround(bool grounded);
+    void setOnGround(bool grounded) override;
 
     int getLives() const;
     void loseLife();
@@ -33,6 +46,7 @@ public:
     void setSpawnPoint(double x, double y);
 
     void takeDamage(int damage) override;
+    void showDeathPose();
 };
 
 #endif // PLAYER_H

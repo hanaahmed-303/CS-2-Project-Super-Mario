@@ -2,9 +2,16 @@
 #define GOOMBA_H
 
 #include "enemy.h"
+#include <QPixmap>
 
 class Goomba : public Enemy
 {
+private:
+    QPixmap walkFrame1;
+    QPixmap walkFrame2;
+    QPixmap flatFrame;
+    int animationCounter = 0;
+
 public:
     Goomba(double x, double y, const QString &imagePath);
 
