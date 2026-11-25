@@ -27,6 +27,9 @@
         <file>images/goomba.png</file>
         <file>images/goomba_walk2.png</file>
         <file>images/goomba_flat.png</file>
+        <file>images/koopa.png</file>
+        <file>images/koopa_walk2.png</file>
+        <file>images/koopa_shell.png</file>
         <file>images/mario_walk1.png</file>
         <file>images/mario_walk2.png</file>
         <file>images/mario_walk3.png</file>
@@ -44,6 +47,7 @@
         <file>sounds/jump.wav</file>
         <file>sounds/coin.wav</file>
         <file>sounds/stomp.wav</file>
+        <file>sounds/kick.wav</file>
         <file>sounds/death.wav</file>
         <file>sounds/gameover.wav</file>
         <file>sounds/flagpole.wav</file>
