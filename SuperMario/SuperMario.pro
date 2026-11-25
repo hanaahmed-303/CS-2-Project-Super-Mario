@@ -12,6 +12,7 @@ SOURCES += \
     collisionmanager.cpp \
     flag.cpp \
     level.cpp \
+    leveltimer.cpp \
     obstacle.cpp \
     camera.cpp \
     character.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     collisionmanager.h \
     flag.h \
     level.h \
+    leveltimer.h \
     obstacle.h \
     camera.h \
     character.h \
