@@ -58,6 +58,13 @@ private:
     bool used = false;
 };
 
+class HardBlock : public StaticObstacle
+{
+public:
+    HardBlock(double x, double y);      // staircase block, can't be broken
+    bool isHazard() const override { return false; }
+};
+
 class Spike : public StaticObstacle
 {
 public:
