@@ -11,6 +11,7 @@ SoundManager::SoundManager(QObject *parent)
     addEffect("death",    "qrc:/sounds/death.wav");
     addEffect("gameover", "qrc:/sounds/gameover.wav");
     addEffect("flagpole", "qrc:/sounds/flagpole.wav");
+    addEffect("bump",     "qrc:/sounds/bump.wav");
 
     // Background music (MP3), repeats forever
     audioOutput = new QAudioOutput(this);

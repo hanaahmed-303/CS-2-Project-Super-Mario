@@ -26,5 +26,6 @@
         <file>sounds/death.wav</file>
         <file>sounds/gameover.wav</file>
         <file>sounds/flagpole.wav</file>
+        <file>sounds/bump.wav</file>
     </qresource>
 </RCC>
