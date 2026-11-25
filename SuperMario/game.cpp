@@ -77,7 +77,12 @@ void Game::gameLoop()
     player->update();
 
     // 3. Collisions with the level (Mohamed's CollisionManager)
+    double speedYBefore = player->getVelocityY();
     CollisionManager::resolveObstacles(player, previousBounds, level->getObstacles());
+
+    // Mario was going up and the collision stopped him -> he hit a block with his head
+    if (speedYBefore < 0 && player->getVelocityY() == 0)
+        hitBlockAbove();
     CollisionManager::checkHazards(player, level->getObstacles());
 
     // Enemies: move, collide with blocks, then check against Mario
@@ -408,4 +413,27 @@ void Game::addPoints(int points, const QPointF &where)
 {
     hud->getScore()->increase(points);             // add to the score
     scene->addItem(new ScorePopup(points, where));  // show the floating number
+}
+
+void Game::hitBlockAbove()
+{
+    // A point just above the middle of Mario's head
+    QRectF mario = player->getBounds();
+    QPointF probe(mario.center().x(), mario.top() - 2);
+
+    for (Obstacle *obstacle : level->getObstacles()) {
+        if (!obstacle->getBounds().contains(probe))
+            continue;
+
+        QuestionBlock *block = dynamic_cast<QuestionBlock *>(obstacle);
+        if (block && block->hit()) {
+            sound->play("coin");
+            addPoints(200, block->scenePos() + QPointF(4, -28));
+        } else {
+            sound->play("bump");
+        }
+        return;
+    }
+
+    sound->play("bump");    // hit the edge of a block
 }

@@ -71,6 +71,7 @@ private:
     void clearEnemies();
     void levelComplete();
     void addPoints(int points, const QPointF &where);
+    void hitBlockAbove();
     void updateDeathAnimation();
     void finishDeath();
     QSet<int> keysPressed;
