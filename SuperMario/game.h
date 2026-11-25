@@ -19,6 +19,7 @@
 #include "flag.h"
 #include "soundmanager.h"
 #include "scorepopup.h"
+#include "leveltimer.h"
 
 enum class GameState {
     START_SCREEN,
@@ -72,6 +73,7 @@ private:
     void levelComplete();
     void addPoints(int points, const QPointF &where);
     void hitBlockAbove();
+    void collectCoin();
     void updateDeathAnimation();
     void finishDeath();
     QSet<int> keysPressed;
@@ -81,6 +83,8 @@ private:
     int levelNumber;
     Camera *camera;
     SoundManager *sound;
+    LevelTimer *timer;
+    int coins = 0;
     Player *player;
     Level *level = nullptr;
     QList<Goomba *> enemies;

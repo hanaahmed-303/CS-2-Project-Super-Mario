@@ -4,8 +4,8 @@
 Score::Score(QGraphicsItem *parent)
     : QGraphicsTextItem(parent), score(0)
 {
-    setFont(QFont("Arial", 16, QFont::Bold));
-    setDefaultTextColor(Qt::black);
+    setFont(QFont("Courier New", 16, QFont::Bold));
+    setDefaultTextColor(Qt::white);
     setZValue(100);      // drawn on top of the game
     updateText();
 }
@@ -29,5 +29,5 @@ int Score::getScore() const
 
 void Score::updateText()
 {
-    setPlainText("Score: " + QString::number(score));
+    setPlainText(QString("%1").arg(score, 6, 10, QChar('0')));   // e.g. 000150
 }

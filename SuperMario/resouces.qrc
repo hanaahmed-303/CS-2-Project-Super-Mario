@@ -38,5 +38,7 @@
         <file>sounds/gameover.wav</file>
         <file>sounds/flagpole.wav</file>
         <file>sounds/bump.wav</file>
+        <file>sounds/hurryup.wav</file>
+        <file>sounds/1up.wav</file>
     </qresource>
 </RCC>
