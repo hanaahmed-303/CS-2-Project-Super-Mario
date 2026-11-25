@@ -53,6 +53,7 @@ bool Level::loadFromFile(const QString &path, QString *error)
     QList<Collectible *> newCollectibles;
     QList<QPointF> newEnemySpawns;
     QList<SceneryItem> scenery;
+    double newCastleDoorX = -1;
     Flag *newFlag = nullptr;
     QPointF newSpawn;
     bool hasSpawn = false;
@@ -95,6 +96,7 @@ bool Level::loadFromFile(const QString &path, QString *error)
                 break;
             case 'k':
                 scenery.append({QStringLiteral(":/images/castle.png"), QPointF(x, y + TILE_SIZE)});
+                newCastleDoorX = x + 80;        // the door is in the middle of the castle
                 break;
             case 'Q':
                 obstacle = new QuestionBlock(x, y);
@@ -165,6 +167,7 @@ bool Level::loadFromFile(const QString &path, QString *error)
     obstacles = std::move(newObstacles);
     collectibles = std::move(newCollectibles);
     flag = newFlag;
+    castleDoorX = newCastleDoorX >= 0 ? newCastleDoorX : newFlag->x() + 6 * TILE_SIZE;
     if (error)
         error->clear();
     return true;

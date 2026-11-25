@@ -27,6 +27,9 @@ enum class GameState {
     PLAYING,
     PAUSED,
     DYING,
+    FLAGPOLE,           // sliding down the pole
+    WALK_TO_CASTLE,     // walking into the castle
+    TIME_BONUS,         // leftover TIME turns into points
     LEVEL_COMPLETE,
     GAME_OVER,
     VICTORY
@@ -72,6 +75,9 @@ private:
     void spawnEnemies();
     void clearEnemies();
     void levelComplete();
+    void updateFlagpole();
+    void updateWalkToCastle();
+    void updateTimeBonus();
     void addPoints(int points, const QPointF &where);
     void hitBlockAbove();
     void collectCoin();
@@ -86,6 +92,7 @@ private:
     SoundManager *sound;
     LevelTimer *timer;
     int coins = 0;
+    int bonusTime = 0;          // TIME left, counted into points at the end
     Player *player;
     Level *level = nullptr;
     QList<Goomba *> enemies;

@@ -31,6 +31,7 @@ public:
     const QList<Collectible *> &getCollectibles() const;
     void addCollectible(Collectible *item);    // e.g. a mushroom coming out of a ? block
     Flag *getFlag() const { return root ? flag : nullptr; }
+    double getCastleDoorX() const { return castleDoorX; }   // where Mario enters the castle
 
 private:
     QPointer<QGraphicsScene> scene;
@@ -41,6 +42,7 @@ private:
     QList<Obstacle *> obstacles;
     QList<Collectible *> collectibles;
     Flag *flag = nullptr;
+    double castleDoorX = -1;
 };
 
 #endif

@@ -10,12 +10,14 @@ Player::Player(double x, double y, const QString &imagePath)
     // Load every animation picture once
     smallFrames.stand = QPixmap(imagePath);
     smallFrames.jump  = QPixmap(":/images/mario_jump.png");
+    smallFrames.climb = QPixmap(":/images/mario_climb.png");
     smallFrames.walk  = { QPixmap(":/images/mario_walk1.png"),
                           QPixmap(":/images/mario_walk2.png"),
                           QPixmap(":/images/mario_walk3.png") };
 
     bigFrames.stand = QPixmap(":/images/mario_big.png");
     bigFrames.jump  = QPixmap(":/images/mario_big_jump.png");
+    bigFrames.climb = QPixmap(":/images/mario_big_climb.png");
     bigFrames.walk  = { QPixmap(":/images/mario_big_walk1.png"),
                         QPixmap(":/images/mario_big_walk2.png"),
                         QPixmap(":/images/mario_big_walk3.png") };
@@ -72,6 +74,13 @@ void Player::showFrame(const QPixmap &frame)
         setPixmap(frame);
     else
         setPixmap(frame.transformed(QTransform().scale(-1, 1)));  // mirror
+}
+
+void Player::showClimbPose()
+{
+    setOpacity(1.0);
+    facingRight = true;
+    setPixmap(frames().climb);
 }
 
 void Player::showDeathPose()
@@ -137,6 +146,7 @@ void Player::respawn()
     damageCooldown = 60;
 
     shape = PlayerShape::SMALL;     // a new life starts small
+    show();                         // visible again (hidden after entering the castle)
     facingRight = true;
     animationCounter = 0;
     setOpacity(1.0);
