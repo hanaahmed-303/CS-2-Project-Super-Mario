@@ -1,4 +1,4 @@
-QT += widgets
+QT += widgets multimedia
 
 CONFIG += c++17
 
@@ -24,7 +24,8 @@ SOURCES += \
     main.cpp \
     messagescreen.cpp \
     player.cpp \
-    score.cpp
+    score.cpp \
+    soundmanager.cpp
 
 HEADERS += \
     background.h \
@@ -43,7 +44,8 @@ HEADERS += \
     hud.h \
     messagescreen.h \
     player.h \
-    score.h
+    score.h \
+    soundmanager.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
