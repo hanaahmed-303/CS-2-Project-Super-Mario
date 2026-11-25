@@ -13,6 +13,7 @@ SoundManager::SoundManager(QObject *parent)
     addEffect("gameover", "qrc:/sounds/gameover.wav");
     addEffect("flagpole", "qrc:/sounds/flagpole.wav");
     addEffect("bump",     "qrc:/sounds/bump.wav");
+    addEffect("break",    "qrc:/sounds/brick.wav");
     addEffect("beep",     "qrc:/sounds/beep.wav");
     addEffect("powerup_appears", "qrc:/sounds/powerup_appears.wav");
     addEffect("powerup",  "qrc:/sounds/powerup.wav");
