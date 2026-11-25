@@ -190,6 +190,12 @@ const QList<Collectible *> &Level::getCollectibles() const
     return root ? collectibles : empty;
 }
 
+void Level::removeObstacle(Obstacle *obstacle)
+{
+    obstacles.removeOne(obstacle);  // no more collisions with it
+    delete obstacle;                // also removes it from the scene
+}
+
 void Level::updateAll()
 {
     for (Obstacle *obstacle : getObstacles())

@@ -14,6 +14,13 @@ Brick::Brick(double x, double y)
 {
 }
 
+void Brick::bump()
+{
+    // Same little bounce as the ? block
+    moveBy(0, -8);
+    QTimer::singleShot(100, this, [this]() { moveBy(0, 8); });
+}
+
 // Picks the right picture: top rim or body, left or right half
 static QString pipeImage(bool isTop, bool isLeft)
 {
