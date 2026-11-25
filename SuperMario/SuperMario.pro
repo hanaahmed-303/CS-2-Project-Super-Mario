@@ -25,6 +25,7 @@ SOURCES += \
     main.cpp \
     messagescreen.cpp \
     player.cpp \
+    powerup.cpp \
     score.cpp \
     scorepopup.cpp \
     soundmanager.cpp
@@ -47,6 +48,7 @@ HEADERS += \
     hud.h \
     messagescreen.h \
     player.h \
+    powerup.h \
     score.h \
     scorepopup.h \
     soundmanager.h
