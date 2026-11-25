@@ -1,4 +1,5 @@
 #include "game.h"
+#include <algorithm>
 #include <utility>
 
 Game::Game(QWidget *parent) : QGraphicsView(parent)
@@ -70,6 +71,20 @@ void Game::gameLoop()
     // Mario's death animation runs on its own; everything else is frozen
     if (state == GameState::DYING) {
         updateDeathAnimation();
+        return;
+    }
+
+    // End of the level: each step runs on its own
+    if (state == GameState::FLAGPOLE) {
+        updateFlagpole();
+        return;
+    }
+    if (state == GameState::WALK_TO_CASTLE) {
+        updateWalkToCastle();
+        return;
+    }
+    if (state == GameState::TIME_BONUS) {
+        updateTimeBonus();
         return;
     }
 
@@ -402,18 +417,86 @@ void Game::clearEnemies()
 
 void Game::levelComplete()
 {
+    // Mario grabbed the flagpole
     timer->pause();
     sound->stopMusic();
     sound->play("flagpole");
-    state = GameState::LEVEL_COMPLETE;     // freeze the game
-    addPoints(500, player->pos() + QPointF(0, -24));   // bonus for finishing the level
-    hud->refresh(player->getHealth(), player->getMaxHealth(),
-                 player->getLives(), levelNumber,
-                 coins, timer->timeLeft());
+    keysPressed.clear();
+    state = GameState::FLAGPOLE;
 
+    Flag *flag = level->getFlag();
+
+    // The higher he grabs the pole, the more points (like the original)
+    double height = (flag->getPoleBottom() - player->getBounds().bottom())
+                    / (flag->getPoleBottom() - flag->getPoleTop());
+    int points = height > 0.8 ? 5000 : height > 0.6 ? 2000 :
+                 height > 0.4 ? 800  : height > 0.2 ? 400  : 100;
+    addPoints(points, QPointF(flag->getPoleX() + 12, player->y()));
+
+    // Hug the pole (Mario on its left side)
+    player->setVelocityX(0);
+    player->setVelocityY(0);
+    player->setX(flag->getPoleX() - player->boundingRect().width() + 4);
+    player->showClimbPose();
+}
+
+void Game::updateFlagpole()
+{
+    Flag *flag = level->getFlag();
+
+    // The flag and Mario both slide down
+    bool flagDown = flag->lowerCloth(4);
+
+    double bottom = flag->getPoleBottom();
+    double feet = player->getBounds().bottom();
+    if (feet < bottom)
+        player->moveBy(0, std::min(4.0, bottom - feet));
+    bool marioDown = player->getBounds().bottom() >= bottom;
+
+    if (flagDown && marioDown) {
+        // Hop to the other side of the pole and walk to the castle
+        player->setX(flag->getPoleX() + 4);
+        state = GameState::WALK_TO_CASTLE;
+    }
+
+    updateCamera();
+}
+
+void Game::updateWalkToCastle()
+{
+    QRectF previousBounds = player->getBounds();
+    player->moveRight();
+    player->update();
+    CollisionManager::resolveObstacles(player, previousBounds, level->getObstacles());
+
+    // Reached the castle door -> Mario goes inside
+    if (player->getBounds().center().x() >= level->getCastleDoorX()) {
+        player->hide();
+        bonusTime = timer->timeLeft();
+        state = GameState::TIME_BONUS;
+    }
+
+    updateCamera();
+}
+
+void Game::updateTimeBonus()
+{
+    if (bonusTime > 0) {
+        // Every unit of TIME left is worth 50 points, counted down quickly
+        int step = std::min(bonusTime, 2);
+        bonusTime -= step;
+        hud->getScore()->increase(50 * step);
+        if (bonusTime % 10 == 0)
+            sound->play("beep");
+
+        hud->refresh(player->getHealth(), player->getMaxHealth(),
+                     player->getLives(), levelNumber, coins, bonusTime);
+        return;
+    }
+
+    // Done: show the message, then the next level after 2 seconds
+    state = GameState::LEVEL_COMPLETE;
     message->showMessage("LEVEL " + QString::number(levelNumber) + " COMPLETE!");
-
-    // Wait 2 seconds, then go to the next level
     QTimer::singleShot(2000, this, &Game::nextLevel);
 }
 
