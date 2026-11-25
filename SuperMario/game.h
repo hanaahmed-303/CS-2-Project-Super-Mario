@@ -9,6 +9,8 @@
 #include <QMouseEvent>
 #include <QList>
 #include "messagescreen.h"
+#include "titlescreen.h"
+#include "levelintroscreen.h"
 #include "hud.h"
 #include "camera.h"
 #include "player.h"
@@ -25,6 +27,7 @@
 
 enum class GameState {
     START_SCREEN,
+    LEVEL_INTRO,        // black WORLD 1-1 / TIME UP screen, waiting
     PLAYING,
     PAUSED,
     DYING,
@@ -53,6 +56,7 @@ public:
     static const int WINDOW_HEIGHT = 600;
     static const int FRAME_MS      = 16;
     static const int MAX_LEVELS = 3;
+    static const int INTRO_MS = 2500;   // how long WORLD 1-1 stays on screen
 
     ~Game();
 
@@ -84,9 +88,15 @@ private:
     void collectCoin();
     void updateDeathAnimation();
     void finishDeath();
+    void continueAfterDeath();
+    void showLevelIntro();
+    double viewLeft();
     QSet<int> keysPressed;
     GameState state;
     MessageScreen *message;
+    TitleScreen *title;             // logo before the game starts
+    LevelIntroScreen *intro;        // black WORLD / TIME UP / GAME OVER screen
+    bool timeRanOut = false;        // the last death was because TIME reached 0
     HUD *hud;
     int levelNumber;
     Camera *camera;
