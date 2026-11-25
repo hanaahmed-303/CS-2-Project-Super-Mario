@@ -4,6 +4,10 @@
         <file>images/brick.png</file>
         <file>images/coin.png</file>
         <file>images/flag.png</file>
+        <file>images/flagpole.png</file>
+        <file>images/flag_cloth.png</file>
+        <file>images/mario_climb.png</file>
+        <file>images/mario_big_climb.png</file>
         <file>images/ground.png</file>
         <file>images/hard_block.png</file>
         <file>images/cloud.png</file>
@@ -44,6 +48,7 @@
         <file>sounds/gameover.wav</file>
         <file>sounds/flagpole.wav</file>
         <file>sounds/bump.wav</file>
+        <file>sounds/beep.wav</file>
         <file>sounds/powerup_appears.wav</file>
         <file>sounds/powerup.wav</file>
         <file>sounds/powerdown.wav</file>
