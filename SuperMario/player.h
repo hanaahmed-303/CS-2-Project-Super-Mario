@@ -28,6 +28,7 @@ private:
     struct Frames {                 // one set of pictures per shape
         QPixmap stand;
         QPixmap jump;
+        QPixmap climb;              // holding the flagpole
         QList<QPixmap> walk;
     };
     Frames smallFrames;
@@ -60,6 +61,7 @@ public:
 
     void takeDamage(int damage) override;
     void showDeathPose();
+    void showClimbPose();           // hugging the flagpole
 
     PlayerShape getShape() const;
     bool grow();                    // Super Mushroom: SMALL -> BIG (false if already big)
