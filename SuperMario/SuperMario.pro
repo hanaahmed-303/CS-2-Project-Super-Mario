@@ -22,6 +22,8 @@ SOURCES += \
     goomba.cpp \
     healthbar.cpp \
     hud.cpp \
+    coinpop.cpp \
+    effect.cpp \
     levelintroscreen.cpp \
     titlescreen.cpp \
     koopa.cpp \
@@ -49,6 +51,8 @@ HEADERS += \
     goomba.h \
     healthbar.h \
     hud.h \
+    coinpop.h \
+    effect.h \
     levelintroscreen.h \
     titlescreen.h \
     koopa.h \

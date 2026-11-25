@@ -620,11 +620,17 @@ void Game::hitBlockAbove()
     QRectF mario = player->getBounds();
     QPointF probe(mario.center().x(), mario.top() - 2);
 
+    Brick *brokenBrick = nullptr;
+    bool hitSomething = false;
+
     for (Obstacle *obstacle : level->getObstacles()) {
         if (!obstacle->getBounds().contains(probe))
             continue;
 
+        hitSomething = true;
         QuestionBlock *block = dynamic_cast<QuestionBlock *>(obstacle);
+        Brick *brick = dynamic_cast<Brick *>(obstacle);
+
         if (block && block->hit()) {
             if (block->getContent() == QuestionBlock::Content::Mushroom) {
                 // A Super Mushroom rises out of the block (block bounced up 8 px)
@@ -632,17 +638,41 @@ void Game::hitBlockAbove()
                 level->addCollectible(mushroom);
                 sound->play("powerup_appears");
             } else {
+                // A coin jumps out of the block
+                scene->addItem(new CoinPop(block->x(), block->y() - 32));
                 sound->play("coin");
                 addPoints(200, block->scenePos() + QPointF(4, -28));
                 collectCoin();
             }
+        } else if (brick && player->getShape() == PlayerShape::BIG) {
+            brokenBrick = brick;        // break it after the loop (we're reading the list)
+        } else if (brick) {
+            brick->bump();              // small Mario: it only bounces
+            sound->play("bump");
         } else {
             sound->play("bump");
         }
-        return;
+        break;
     }
 
-    sound->play("bump");    // hit the edge of a block
+    if (brokenBrick)
+        breakBrick(brokenBrick);
+    else if (!hitSomething)
+        sound->play("bump");    // hit the edge of a block
+}
+
+void Game::breakBrick(Brick *brick)
+{
+    // 4 pieces fly out: two up high, two lower, to the left and right
+    QPointF corner = brick->scenePos();
+    scene->addItem(new BrickDebris(corner.x(),      corner.y(),      -2, -10));
+    scene->addItem(new BrickDebris(corner.x() + 16, corner.y(),       2, -10));
+    scene->addItem(new BrickDebris(corner.x(),      corner.y() + 16, -2, -7));
+    scene->addItem(new BrickDebris(corner.x() + 16, corner.y() + 16,  2, -7));
+
+    level->removeObstacle(brick);
+    sound->play("break");
+    hud->getScore()->increase(50);      // like the original: 50 points, no popup
 }
 
 void Game::collectCoin()

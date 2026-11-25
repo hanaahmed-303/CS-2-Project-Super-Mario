@@ -36,6 +36,7 @@ class Brick : public StaticObstacle
 public:
     Brick(double x, double y);
     bool isHazard() const override { return false; }
+    void bump();        // small Mario hits it: it bounces but doesn't break
 };
 
 class Pipe : public StaticObstacle
