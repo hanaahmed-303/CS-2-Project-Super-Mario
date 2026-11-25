@@ -24,6 +24,8 @@
 #include "scorepopup.h"
 #include "leveltimer.h"
 #include "powerup.h"
+#include "effect.h"
+#include "coinpop.h"
 
 enum class GameState {
     START_SCREEN,
@@ -85,6 +87,7 @@ private:
     void updateTimeBonus();
     void addPoints(int points, const QPointF &where);
     void hitBlockAbove();
+    void breakBrick(Brick *brick);
     void collectCoin();
     void updateDeathAnimation();
     void finishDeath();
