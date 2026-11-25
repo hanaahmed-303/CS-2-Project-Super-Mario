@@ -41,7 +41,8 @@ public:
 class Pipe : public StaticObstacle
 {
 public:
-    Pipe(double x, double y);
+    // isTop: the rim at the top of the pipe; isLeft: the left half of the pipe
+    Pipe(double x, double y, bool isTop, bool isLeft);
     bool isHazard() const override { return false; }
 };
 

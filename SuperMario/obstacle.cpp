@@ -14,8 +14,18 @@ Brick::Brick(double x, double y)
 {
 }
 
-Pipe::Pipe(double x, double y)
-    : StaticObstacle(x, y, QStringLiteral(":/images/pipe.png"))
+// Picks the right picture: top rim or body, left or right half
+static QString pipeImage(bool isTop, bool isLeft)
+{
+    if (isTop)
+        return isLeft ? QStringLiteral(":/images/pipe_top_left.png")
+                      : QStringLiteral(":/images/pipe_top_right.png");
+    return isLeft ? QStringLiteral(":/images/pipe_body_left.png")
+                  : QStringLiteral(":/images/pipe_body_right.png");
+}
+
+Pipe::Pipe(double x, double y, bool isTop, bool isLeft)
+    : StaticObstacle(x, y, pipeImage(isTop, isLeft))
 {
 }
 
