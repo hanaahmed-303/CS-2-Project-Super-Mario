@@ -59,6 +59,12 @@ Game::~Game()
 }
 void Game::gameLoop()
 {
+    // Mario's death animation runs on its own; everything else is frozen
+    if (state == GameState::DYING) {
+        updateDeathAnimation();
+        return;
+    }
+
     if (state != GameState::PLAYING)
         return;
 
@@ -191,17 +197,44 @@ void Game::updateCamera()
 
 void Game::handlePlayerDeath()
 {
+    state = GameState::DYING;   // freeze the level, only Mario moves
+    keysPressed.clear();
+
+    sound->stopMusic();
+    sound->play("death");
+
+    player->showDeathPose();
+    deathVelocity = -10;        // the little hop up
+    deathFrames = 0;
+}
+
+void Game::updateDeathAnimation()
+{
+    deathFrames++;
+
+    // Short pause in the dead pose (0.5 s), then hop up and fall slowly
+    if (deathFrames > 30) {
+        player->moveBy(0, deathVelocity);
+        deathVelocity += 0.35;          // weaker than normal gravity = slower fall
+    }
+
+    // When the death sound is over (~2.8 s), continue the game
+    if (deathFrames > 170)
+        finishDeath();
+}
+
+void Game::finishDeath()
+{
     player->loseLife();
 
     if (player->getLives() == 0) {
-        sound->stopMusic();
         sound->play("gameover");
         gameOver();
         return;
     }
 
-    sound->play("death");
-    restartLevel();
+    restartLevel();     // rebuild the level, Mario back at the start
+    startGame();        // state = PLAYING, music starts again
 }
 void Game::restartLevel()
 {
