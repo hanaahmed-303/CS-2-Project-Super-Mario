@@ -15,6 +15,7 @@
 #include "level.h"
 #include "collisionmanager.h"
 #include "goomba.h"
+#include "koopa.h"
 #include "collectible.h"
 #include "flag.h"
 #include "soundmanager.h"
@@ -95,7 +96,7 @@ private:
     int bonusTime = 0;          // TIME left, counted into points at the end
     Player *player;
     Level *level = nullptr;
-    QList<Goomba *> enemies;
+    QList<Enemy *> enemies;     // Goombas and Koopas together (polymorphism)
     double deathVelocity = 0;   // Mario's vertical speed during the death animation
     int deathFrames = 0;        // frames since the death animation started
 };
