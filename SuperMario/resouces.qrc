@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>images/mario.png</file>
+        <file>images/title_logo.png</file>
         <file>images/brick.png</file>
         <file>images/coin.png</file>
         <file>images/flag.png</file>

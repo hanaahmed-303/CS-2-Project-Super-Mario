@@ -21,8 +21,10 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     timer = new LevelTimer(this);
     connect(timer, &LevelTimer::hurryUp, this, [this]() { sound->play("hurryup"); });
     connect(timer, &LevelTimer::timeUp, this, [this]() {
-        if (state == GameState::PLAYING)
+        if (state == GameState::PLAYING) {
+            timeRanOut = true;          // show TIME UP after the death animation
             handlePlayerDeath();
+        }
     });
 
     setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -45,7 +47,14 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     // Message in the middle of the screen
     message = new MessageScreen();
     scene->addItem(message);
-    message->showMessage("Click to start");
+
+    // Title logo over Level 1 (like the original), black screens for WORLD / GAME OVER
+    title = new TitleScreen();
+    scene->addItem(title);
+    title->showAt(0);
+
+    intro = new LevelIntroScreen();
+    scene->addItem(intro);
 
     // Load the first level (creates the world and places Mario)
     loadLevel(levelNumber);
@@ -301,7 +310,8 @@ void Game::handleInput()
 void Game::mousePressEvent(QMouseEvent *event)
 {
     if (state == GameState::START_SCREEN) {
-        startGame();
+        title->hide();
+        showLevelIntro();       // WORLD 1-1 first, then the game starts
     }
     else if (state == GameState::GAME_OVER) {
         resetGame();
@@ -361,6 +371,20 @@ void Game::finishDeath()
 {
     player->loseLife();
 
+    // Ran out of time: show TIME UP for 2 seconds first
+    if (timeRanOut) {
+        timeRanOut = false;
+        state = GameState::LEVEL_INTRO;
+        intro->showTimeUp(viewLeft());
+        QTimer::singleShot(2000, this, &Game::continueAfterDeath);
+        return;
+    }
+
+    continueAfterDeath();
+}
+
+void Game::continueAfterDeath()
+{
     if (player->getLives() == 0) {
         sound->play("gameover");
         gameOver();
@@ -368,7 +392,31 @@ void Game::finishDeath()
     }
 
     restartLevel();     // rebuild the level, Mario back at the start
-    startGame();        // state = PLAYING, music starts again
+    showLevelIntro();   // WORLD 1-1  Mario x 2, then play again
+}
+
+void Game::showLevelIntro()
+{
+    state = GameState::LEVEL_INTRO;     // frozen: clicks and keys do nothing
+    keysPressed.clear();
+    message->hideMessage();             // e.g. "LEVEL 1 COMPLETE!"
+
+    // The game loop isn't running the HUD now, so update it once here
+    hud->refresh(player->getHealth(), player->getMaxHealth(),
+                 player->getLives(), levelNumber, coins, timer->timeLeft());
+    hud->followCamera(viewLeft());
+
+    intro->showIntro(levelNumber, player->getLives(), viewLeft());
+
+    QTimer::singleShot(INTRO_MS, this, [this]() {
+        intro->hide();
+        startGame();                    // state = PLAYING, TIME and music start
+    });
+}
+
+double Game::viewLeft()
+{
+    return mapToScene(0, 0).x();        // scene x of the window's left edge
 }
 void Game::restartLevel()
 {
@@ -387,7 +435,7 @@ void Game::gameOver()
                  player->getLives(), levelNumber,
                  coins, timer->timeLeft());
 
-    message->showMessage("GAME OVER\nClick to restart");
+    intro->showGameOver(viewLeft());   // black GAME OVER screen
 }
 
 void Game::resetGame()
@@ -398,7 +446,7 @@ void Game::resetGame()
     player->resetLives();
 
     loadLevel(levelNumber);     // rebuild Level 1 from scratch
-    startGame();                // hide the message, state = PLAYING
+    showLevelIntro();           // WORLD 1-1, then play
 }
 
 bool Game::loadLevel(int n)
@@ -543,8 +591,7 @@ void Game::nextLevel()
         return;
     }
 
-    keysPressed.clear();     // don't keep running from the previous level
-    startGame();             // hide the message, state = PLAYING
+    showLevelIntro();        // WORLD 1-2, then play
 }
 
 void Game::winGame()
