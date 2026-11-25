@@ -126,7 +126,7 @@ void Game::gameLoop()
         }
 
         if (CollisionManager::checkEnemyCollision(player, goomba, previousBounds)) {
-            hud->getScore()->increase(100);
+            addPoints(100, goomba->pos() + QPointF(0, -16));
             sound->play("stomp");
         }
     }
@@ -157,7 +157,7 @@ void Game::gameLoop()
             continue;
 
         if (player->getBounds().intersects(item->getBounds())) {
-            hud->getScore()->increase(item->collect());
+            addPoints(item->collect(), item->scenePos());
             sound->play("coin");
         }
     }
@@ -366,7 +366,7 @@ void Game::levelComplete()
     sound->stopMusic();
     sound->play("flagpole");
     state = GameState::LEVEL_COMPLETE;     // freeze the game
-    hud->getScore()->increase(500);        // bonus for finishing the level
+    addPoints(500, player->pos() + QPointF(0, -24));   // bonus for finishing the level
     hud->refresh(player->getHealth(), player->getMaxHealth(),
                  player->getLives(), levelNumber);
 
@@ -402,4 +402,10 @@ void Game::winGame()
 void Game::exitGame()
 {
     close();      // closes the window → the program ends
+}
+
+void Game::addPoints(int points, const QPointF &where)
+{
+    hud->getScore()->increase(points);             // add to the score
+    scene->addItem(new ScorePopup(points, where));  // show the floating number
 }

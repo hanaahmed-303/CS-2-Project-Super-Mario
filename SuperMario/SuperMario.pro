@@ -25,6 +25,7 @@ SOURCES += \
     messagescreen.cpp \
     player.cpp \
     score.cpp \
+    scorepopup.cpp \
     soundmanager.cpp
 
 HEADERS += \
@@ -45,6 +46,7 @@ HEADERS += \
     messagescreen.h \
     player.h \
     score.h \
+    scorepopup.h \
     soundmanager.h
 
 # Default rules for deployment.
