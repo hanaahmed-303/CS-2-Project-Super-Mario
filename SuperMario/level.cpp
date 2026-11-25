@@ -72,6 +72,9 @@ bool Level::loadFromFile(const QString &path, QString *error)
             case 'B':
                 obstacle = new Brick(x, y);
                 break;
+            case 'Q':
+                obstacle = new QuestionBlock(x, y);
+                break;
             case 'P':
                 obstacle = new Pipe(x, y);
                 break;

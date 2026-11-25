@@ -45,6 +45,18 @@ public:
     bool isHazard() const override { return false; }
 };
 
+class QuestionBlock : public StaticObstacle
+{
+public:
+    QuestionBlock(double x, double y);
+    bool isHazard() const override { return false; }
+    bool isUsed() const { return used; }
+    bool hit();          // true only the first time (it gives a coin once)
+
+private:
+    bool used = false;
+};
+
 class Spike : public StaticObstacle
 {
 public:
