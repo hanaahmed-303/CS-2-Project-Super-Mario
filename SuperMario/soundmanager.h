@@ -18,6 +18,8 @@ public:
     void play(const QString &name);    // play a short sound effect
     void playMusic();                  // start the background music (loops)
     void stopMusic();                  // stop the background music
+    void pauseMusic();                 // pause (keeps the position)
+    void resumeMusic();                // continue after a pause
 
 private:
     void addEffect(const QString &name, const QString &file);
